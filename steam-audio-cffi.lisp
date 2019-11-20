@@ -25,16 +25,16 @@
 (cl:export 'STEAMAUDIO_VERSION_PATCH)
 
 (cffi:defcenum IPLbool
-  :IPL_FALSE
-  :IPL_TRUE)
+  :ipl-false
+  :ipl-true)
 
 (cl:export 'IPLbool)
 
 (cffi:defcenum IPLerror
-  :IPL_STATUS_SUCCESS
-  :IPL_STATUS_FAILURE
-  :IPL_STATUS_OUTOFMEMORY
-  :IPL_STATUS_INITIALIZATION)
+  :ipl-status-success
+  :ipl-status-failure
+  :ipl-status-outofmemory
+  :ipl-status-initialization)
 
 (cl:export 'IPLerror)
 
@@ -97,9 +97,9 @@
 (cl:export 'iplCalculateRelativeDirection)
 
 (cffi:defcenum IPLComputeDeviceType
-  :IPL_COMPUTEDEVICE_CPU
-  :IPL_COMPUTEDEVICE_GPU
-  :IPL_COMPUTEDEVICE_ANY)
+  :ipl-computedevice-cpu
+  :ipl-computedevice-gpu
+  :ipl-computedevice-any)
 
 (cl:export 'IPLComputeDeviceType)
 
@@ -129,16 +129,16 @@
 (cl:export 'iplDestroyComputeDevice)
 
 (cffi:defcenum IPLSceneType
-  :IPL_SCENETYPE_PHONON
-  :IPL_SCENETYPE_EMBREE
-  :IPL_SCENETYPE_RADEONRAYS
-  :IPL_SCENETYPE_CUSTOM)
+  :ipl-scenetype-phonon
+  :ipl-scenetype-embree
+  :ipl-scenetype-radeonrays
+  :ipl-scenetype-custom)
 
 (cl:export 'IPLSceneType)
 
 (cffi:defcenum IPLSimulationType
-  :IPL_SIMTYPE_REALTIME
-  :IPL_SIMTYPE_BAKED)
+  :ipl-simtype-realtime
+  :ipl-simtype-baked)
 
 (cl:export 'IPLSimulationType)
 
@@ -335,8 +335,8 @@
 (cl:export 'iplSetNumBounces)
 
 (cffi:defcenum IPLConvolutionType
-  :IPL_CONVOLUTIONTYPE_PHONON
-  :IPL_CONVOLUTIONTYPE_TRUEAUDIONEXT)
+  :ipl-convolutiontype-phonon
+  :ipl-convolutiontype-trueaudionext)
 
 (cl:export 'IPLConvolutionType)
 
@@ -354,37 +354,37 @@
 (cl:export 'convolutionType)
 
 (cffi:defcenum IPLChannelLayoutType
-  :IPL_CHANNELLAYOUTTYPE_SPEAKERS
-  :IPL_CHANNELLAYOUTTYPE_AMBISONICS)
+  :ipl-channellayouttype-speakers
+  :ipl-channellayouttype-ambisonics)
 
 (cl:export 'IPLChannelLayoutType)
 
 (cffi:defcenum IPLChannelLayout
-  :IPL_CHANNELLAYOUT_MONO
-  :IPL_CHANNELLAYOUT_STEREO
-  :IPL_CHANNELLAYOUT_QUADRAPHONIC
-  :IPL_CHANNELLAYOUT_FIVEPOINTONE
-  :IPL_CHANNELLAYOUT_SEVENPOINTONE
-  :IPL_CHANNELLAYOUT_CUSTOM)
+  :ipl-channellayout-mono
+  :ipl-channellayout-stereo
+  :ipl-channellayout-quadraphonic
+  :ipl-channellayout-fivepointone
+  :ipl-channellayout-sevenpointone
+  :ipl-channellayout-custom)
 
 (cl:export 'IPLChannelLayout)
 
 (cffi:defcenum IPLAmbisonicsOrdering
-  :IPL_AMBISONICSORDERING_FURSEMALHAM
-  :IPL_AMBISONICSORDERING_ACN)
+  :ipl-ambisonicsordering-fursemalham
+  :ipl-ambisonicsordering-acn)
 
 (cl:export 'IPLAmbisonicsOrdering)
 
 (cffi:defcenum IPLAmbisonicsNormalization
-  :IPL_AMBISONICSNORMALIZATION_FURSEMALHAM
-  :IPL_AMBISONICSNORMALIZATION_SN3D
-  :IPL_AMBISONICSNORMALIZATION_N3D)
+  :ipl-ambisonicsnormalization-fursemalham
+  :ipl-ambisonicsnormalization-sn3d
+  :ipl-ambisonicsnormalization-n3d)
 
 (cl:export 'IPLAmbisonicsNormalization)
 
 (cffi:defcenum IPLChannelOrder
-  :IPL_CHANNELORDER_INTERLEAVED
-  :IPL_CHANNELORDER_DEINTERLEAVED)
+  :ipl-channelorder-interleaved
+  :ipl-channelorder-deinterleaved)
 
 (cl:export 'IPLChannelOrder)
 
@@ -484,8 +484,8 @@
 (cl:export 'iplRotateAmbisonicsAudioBuffer)
 
 (cffi:defcenum IPLHrtfDatabaseType
-  :IPL_HRTFDATABASETYPE_DEFAULT
-  :IPL_HRTFDATABASETYPE_SOFA)
+  :ipl-hrtfdatabasetype-default
+  :ipl-hrtfdatabasetype-sofa)
 
 (cl:export 'IPLHrtfDatabaseType)
 
@@ -543,8 +543,8 @@
 (cl:export 'iplFlushPanningEffect)
 
 (cffi:defcenum IPLHrtfInterpolation
-  :IPL_HRTFINTERPOLATION_NEAREST
-  :IPL_HRTFINTERPOLATION_BILINEAR)
+  :ipl-hrtfinterpolation-nearest
+  :ipl-hrtfinterpolation-bilinear)
 
 (cl:export 'IPLHrtfInterpolation)
 
@@ -688,16 +688,16 @@
 (cl:export 'iplGetEnvironmentForRenderer)
 
 (cffi:defcenum IPLDirectOcclusionMethod
-  :IPL_DIRECTOCCLUSION_RAYCAST
-  :IPL_DIRECTOCCLUSION_VOLUMETRIC)
+  :ipl-directocclusion-raycast
+  :ipl-directocclusion-volumetric)
 
 (cl:export 'IPLDirectOcclusionMethod)
 
 (cffi:defcenum IPLDirectOcclusionMode
-  :IPL_DIRECTOCCLUSION_NONE
-  :IPL_DIRECTOCCLUSION_NOTRANSMISSION
-  :IPL_DIRECTOCCLUSION_TRANSMISSIONBYVOLUME
-  :IPL_DIRECTOCCLUSION_TRANSMISSIONBYFREQUENCY)
+  :ipl-directocclusion-none
+  :ipl-directocclusion-notransmission
+  :ipl-directocclusion-transmissionbyvolume
+  :ipl-directocclusion-transmissionbyfrequency)
 
 (cl:export 'IPLDirectOcclusionMode)
 
@@ -817,9 +817,9 @@
 (cl:export 'iplFlushDirectSoundEffect)
 
 (cffi:defcenum IPLBakedDataType
-  :IPL_BAKEDDATATYPE_STATICSOURCE
-  :IPL_BAKEDDATATYPE_STATICLISTENER
-  :IPL_BAKEDDATATYPE_REVERB)
+  :ipl-bakeddatatype-staticsource
+  :ipl-bakeddatatype-staticlistener
+  :ipl-bakeddatatype-reverb)
 
 (cl:export 'IPLBakedDataType)
 
@@ -885,9 +885,9 @@
 (cl:export 'iplFlushConvolutionEffect)
 
 (cffi:defcenum IPLProbePlacement
-  :IPL_PLACEMENT_CENTROID
-  :IPL_PLACEMENT_OCTREE
-  :IPL_PLACEMENT_UNIFORMFLOOR)
+  :ipl-placement-centroid
+  :ipl-placement-octree
+  :ipl-placement-uniformfloor)
 
 (cl:export 'IPLProbePlacement)
 
