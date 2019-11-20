@@ -1,7 +1,6 @@
 # steam-audio
-### _azimut <azimut.github@protonmail.com>_
 
-This is a project to do ... something.
+Lisp bindings of Valve's [steam-audio](https://valvesoftware.github.io/steam-audio/) library.
 
 ## License
 
