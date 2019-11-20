@@ -49,12 +49,12 @@
 
 (cffi:defcfun ("iplCleanup" cleanup) :void)
 
-(cffi:defcstruct Vector3
+(cffi:defcstruct vector3
     (x :float)
   (y :float)
   (z :float))
 
-(cl:export 'Vector3)
+(cl:export 'vector3)
 
 (cl:export 'x)
 
@@ -63,8 +63,8 @@
 (cl:export 'z)
 
 (cffi:defcstruct Box
-    (minCoordinates Vector3)
-  (maxCoordinates Vector3))
+    (minCoordinates vector3)
+  (maxCoordinates vector3))
 
 (cl:export 'Box)
 
@@ -73,7 +73,7 @@
 (cl:export 'maxCoordinates)
 
 (cffi:defcstruct Sphere
-    (center Vector3)
+    (center vector3)
   (radius :float))
 
 (cl:export 'Sphere)
@@ -82,11 +82,11 @@
 
 (cl:export 'radius)
 
-(cffi:defcfun ("iplCalculateRelativeDirection" calculate-relative-direction) Vector3
-  (sourcePosition Vector3)
-  (listenerPosition Vector3)
-  (listenerAhead Vector3)
-  (listenerUp Vector3))
+(cffi:defcfun ("iplCalculateRelativeDirection" calculate-relative-direction) vector3
+  (sourcePosition vector3)
+  (listenerPosition vector3)
+  (listenerAhead vector3)
+  (listenerUp vector3))
 
 (cffi:defcenum ComputeDeviceType
   :computedevice-cpu
@@ -415,8 +415,8 @@
 
 (cffi:defcfun ("iplSetAmbisonicsRotation" set-ambisonics-rotation) :void
   (rotator :pointer)
-  (listenerAhead Vector3)
-  (listenerUp Vector3))
+  (listenerAhead vector3)
+  (listenerUp vector3))
 
 (cffi:defcfun ("iplRotateAmbisonicsAudioBuffer" rotate-ambisonics-audio-buffer) :void
   (rotator :pointer)
@@ -464,7 +464,7 @@
   (effect :pointer)
   (binauralRenderer :pointer)
   (inputAudio AudioBuffer)
-  (direction Vector3)
+  (direction vector3)
   (outputAudio AudioBuffer))
 
 (cffi:defcfun ("iplFlushPanningEffect" flush-panning-effect) :void
@@ -489,7 +489,7 @@
   (effect :pointer)
   (binauralRenderer :pointer)
   (inputAudio AudioBuffer)
-  (direction Vector3)
+  (direction vector3)
   (interpolation HrtfInterpolation)
   (outputAudio AudioBuffer))
 
@@ -497,7 +497,7 @@
   (effect :pointer)
   (binauralRenderer :pointer)
   (inputAudio AudioBuffer)
-  (direction Vector3)
+  (direction vector3)
   (interpolation HrtfInterpolation)
   (outputAudio AudioBuffer)
   (leftDelay :pointer)
@@ -590,7 +590,7 @@
 (cl:export 'DirectOcclusionMode)
 
 (cffi:defcstruct DirectSoundPath
-    (direction Vector3)
+    (direction vector3)
   (distanceAttenuation :float)
   (airAbsorption :pointer :count 3)
   (propagationDelay :float)
@@ -631,10 +631,10 @@
 (cl:export 'userData)
 
 (cffi:defcstruct Source
-    (position Vector3)
-  (ahead Vector3)
-  (up Vector3)
-  (right Vector3)
+    (position vector3)
+  (ahead vector3)
+  (up vector3)
+  (right vector3)
   (directivity Directivity))
 
 (cl:export 'Source)
@@ -651,9 +651,9 @@
 
 (cffi:defcfun ("iplGetDirectSoundPath" get-direct-sound-path) DirectSoundPath
   (environment :pointer)
-  (listenerPosition Vector3)
-  (listenerAhead Vector3)
-  (listenerUp Vector3)
+  (listenerPosition vector3)
+  (listenerAhead vector3)
+  (listenerUp vector3)
   (source Source)
   (sourceRadius :float)
   (occlusionMode DirectOcclusionMode)
@@ -733,16 +733,16 @@
 
 (cffi:defcfun ("iplGetWetAudioForConvolutionEffect" get-wet-audio-for-convolution-effect) :void
   (effect :pointer)
-  (listenerPosition Vector3)
-  (listenerAhead Vector3)
-  (listenerUp Vector3)
+  (listenerPosition vector3)
+  (listenerAhead vector3)
+  (listenerUp vector3)
   (wetAudio AudioBuffer))
 
 (cffi:defcfun ("iplGetMixedEnvironmentalAudio" get-mixed-environmental-audio) :void
   (renderer :pointer)
-  (listenerPosition Vector3)
-  (listenerAhead Vector3)
-  (listenerUp Vector3)
+  (listenerPosition vector3)
+  (listenerAhead vector3)
+  (listenerUp vector3)
   (mixedWetAudio AudioBuffer))
 
 (cffi:defcfun ("iplFlushConvolutionEffect" flush-convolution-effect) :void
