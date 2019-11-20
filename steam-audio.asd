@@ -8,4 +8,5 @@
   :serial t
   :depends-on (#:cffi)
   :components ((:file "package")
+               (:file "steam-audio-cffi")
                (:file "steam-audio")))
