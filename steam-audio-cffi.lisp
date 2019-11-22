@@ -50,36 +50,32 @@
 (cffi:defcfun ("iplCleanup" cleanup) :void)
 
 (cffi:defcstruct vector3
-    (x :float)
+  (x :float)
   (y :float)
   (z :float))
 
 (cl:export 'vector3)
 
 (cl:export 'x)
-
 (cl:export 'y)
-
 (cl:export 'z)
 
 (cffi:defcstruct Box
-    (minCoordinates vector3)
+  (minCoordinates vector3)
   (maxCoordinates vector3))
 
 (cl:export 'Box)
 
 (cl:export 'minCoordinates)
-
 (cl:export 'maxCoordinates)
 
 (cffi:defcstruct Sphere
-    (center vector3)
+  (center vector3)
   (radius :float))
 
 (cl:export 'Sphere)
 
 (cl:export 'center)
-
 (cl:export 'radius)
 
 (cffi:defcfun ("iplCalculateRelativeDirection" calculate-relative-direction) vector3
@@ -88,24 +84,22 @@
   (listenerAhead vector3)
   (listenerUp vector3))
 
-(cffi:defcenum ComputeDeviceType
+(cffi:defcenum compute-device-type
   :computedevice-cpu
   :computedevice-gpu
   :computedevice-any)
 
-(cl:export 'ComputeDeviceType)
+(cl:export 'compute-device-type)
 
 (cffi:defcstruct ComputeDeviceFilter
-    (type ComputeDeviceType)
+  (type compute-device-type)
   (maxCUsToReserve :int)
   (fractionCUsForIRUpdate :float))
 
 (cl:export 'ComputeDeviceFilter)
 
 (cl:export 'type)
-
 (cl:export 'maxCUsToReserve)
-
 (cl:export 'fractionCUsForIRUpdate)
 
 (cffi:defcfun ("iplCreateComputeDevice" create-compute-device) error
@@ -131,7 +125,7 @@
 (cl:export 'SimulationType)
 
 (cffi:defcstruct SimulationSettings
-    (sceneType SceneType)
+  (sceneType SceneType)
   (numOcclusionSamples :int)
   (numRays :int)
   (numDiffuseSamples :int)
@@ -143,39 +137,29 @@
   (bakingBatchSize :int)
   (irradianceMinDistance :float))
 
-(cl:export 'SimulationSettings)
+(cl:export 'simulationSettings)
 
 (cl:export 'sceneType)
-
 (cl:export 'numOcclusionSamples)
-
 (cl:export 'numRays)
-
 (cl:export 'numDiffuseSamples)
-
 (cl:export 'numBounces)
-
 (cl:export 'numThreads)
-
 (cl:export 'irDuration)
-
 (cl:export 'ambisonicsOrder)
-
 (cl:export 'maxConvolutionSources)
-
 (cl:export 'bakingBatchSize)
-
 (cl:export 'irradianceMinDistance)
 
 (cffi:defcstruct Triangle
-    (indices :pointer :count 3))
+  (indices :pointer :count 3))
 
 (cl:export 'Triangle)
 
 (cl:export 'indices)
 
 (cffi:defcstruct Material
-    (lowFreqAbsorption :float)
+  (lowFreqAbsorption :float)
   (midFreqAbsorption :float)
   (highFreqAbsorption :float)
   (scattering :float)
@@ -186,17 +170,11 @@
 (cl:export 'Material)
 
 (cl:export 'lowFreqAbsorption)
-
 (cl:export 'midFreqAbsorption)
-
 (cl:export 'highFreqAbsorption)
-
 (cl:export 'scattering)
-
 (cl:export 'lowFreqTransmission)
-
 (cl:export 'midFreqTransmission)
-
 (cl:export 'highFreqTransmission)
 
 (cffi:defcfun ("iplCreateScene" create-scene) error
@@ -245,7 +223,7 @@
   (fileBaseName :string))
 
 (cffi:defcstruct Matrix4x4
-    (elements :pointer))
+  (elements :pointer))
 
 (cl:export 'Matrix4x4)
 
@@ -297,16 +275,14 @@
 (cl:export 'ConvolutionType)
 
 (cffi:defcstruct RenderingSettings
-    (samplingRate :int)
+  (samplingRate :int)
   (frameSize :int)
   (convolutionType ConvolutionType))
 
 (cl:export 'RenderingSettings)
 
 (cl:export 'samplingRate)
-
 (cl:export 'frameSize)
-
 (cl:export 'convolutionType)
 
 (cffi:defcenum ChannelLayoutType
@@ -345,7 +321,7 @@
 (cl:export 'ChannelOrder)
 
 (cffi:defcstruct AudioFormat
-    (channelLayoutType ChannelLayoutType)
+  (channelLayoutType ChannelLayoutType)
   (channelLayout ChannelLayout)
   (numSpeakers :int)
   (speakerDirections :pointer)
@@ -357,23 +333,16 @@
 (cl:export 'AudioFormat)
 
 (cl:export 'channelLayoutType)
-
 (cl:export 'channelLayout)
-
 (cl:export 'numSpeakers)
-
 (cl:export 'speakerDirections)
-
 (cl:export 'ambisonicsOrder)
-
 (cl:export 'ambisonicsOrdering)
-
 (cl:export 'ambisonicsNormalization)
-
 (cl:export 'channelOrder)
 
 (cffi:defcstruct AudioBuffer
-    (format AudioFormat)
+  (format AudioFormat)
   (numSamples :int)
   (interleavedBuffer :pointer)
   (deinterleavedBuffer :pointer))
@@ -381,11 +350,8 @@
 (cl:export 'AudioBuffer)
 
 (cl:export 'format)
-
 (cl:export 'numSamples)
-
 (cl:export 'interleavedBuffer)
-
 (cl:export 'deinterleavedBuffer)
 
 (cffi:defcfun ("iplMixAudioBuffers" mix-audio-buffers) :void
@@ -430,16 +396,14 @@
 (cl:export 'HrtfDatabaseType)
 
 (cffi:defcstruct HrtfParams
-    (type HrtfDatabaseType)
+  (type HrtfDatabaseType)
   (hrtfData :pointer)
   (sofaFileName :string))
 
 (cl:export 'HrtfParams)
 
 (cl:export 'type)
-
 (cl:export 'hrtfData)
-
 (cl:export 'sofaFileName)
 
 (cffi:defcfun ("iplCreateBinauralRenderer" create-binaural-renderer) error
@@ -590,7 +554,7 @@
 (cl:export 'DirectOcclusionMode)
 
 (cffi:defcstruct DirectSoundPath
-    (direction vector3)
+  (direction vector3)
   (distanceAttenuation :float)
   (airAbsorption :pointer :count 3)
   (propagationDelay :float)
@@ -601,21 +565,15 @@
 (cl:export 'DirectSoundPath)
 
 (cl:export 'direction)
-
 (cl:export 'distanceAttenuation)
-
 (cl:export 'airAbsorption)
-
 (cl:export 'propagationDelay)
-
 (cl:export 'occlusionFactor)
-
 (cl:export 'transmissionFactor)
-
 (cl:export 'directivityFactor)
 
 (cffi:defcstruct Directivity
-    (dipoleWeight :float)
+  (dipoleWeight :float)
   (dipolePower :float)
   (callback :pointer)
   (userData :pointer))
@@ -623,15 +581,12 @@
 (cl:export 'Directivity)
 
 (cl:export 'dipoleWeight)
-
 (cl:export 'dipolePower)
-
 (cl:export 'callback)
-
 (cl:export 'userData)
 
 (cffi:defcstruct Source
-    (position vector3)
+  (position vector3)
   (ahead vector3)
   (up vector3)
   (right vector3)
@@ -640,13 +595,9 @@
 (cl:export 'Source)
 
 (cl:export 'position)
-
 (cl:export 'ahead)
-
 (cl:export 'up)
-
 (cl:export 'right)
-
 (cl:export 'directivity)
 
 (cffi:defcfun ("iplGetDirectSoundPath" get-direct-sound-path) DirectSoundPath
@@ -660,7 +611,7 @@
   (occlusionMethod DirectOcclusionMethod))
 
 (cffi:defcstruct DirectSoundEffectOptions
-    (applyDistanceAttenuation bool)
+  (applyDistanceAttenuation bool)
   (applyAirAbsorption bool)
   (applyDirectivity bool)
   (directOcclusionMode DirectOcclusionMode))
@@ -668,11 +619,8 @@
 (cl:export 'DirectSoundEffectOptions)
 
 (cl:export 'applyDistanceAttenuation)
-
 (cl:export 'applyAirAbsorption)
-
 (cl:export 'applyDirectivity)
-
 (cl:export 'directOcclusionMode)
 
 (cffi:defcfun ("iplCreateDirectSoundEffect" create-direct-sound-effect) error
@@ -702,13 +650,12 @@
 (cl:export 'BakedDataType)
 
 (cffi:defcstruct BakedDataIdentifier
-    (identifier :int)
+  (identifier :int)
   (type BakedDataType))
 
 (cl:export 'BakedDataIdentifier)
 
 (cl:export 'identifier)
-
 (cl:export 'type)
 
 (cffi:defcfun ("iplCreateConvolutionEffect" create-convolution-effect) error
@@ -756,7 +703,7 @@
 (cl:export 'ProbePlacement)
 
 (cffi:defcstruct ProbePlacementParams
-    (placement ProbePlacement)
+  (placement ProbePlacement)
   (spacing :float)
   (heightAboveFloor :float)
   (maxOctreeTriangles :int)
@@ -765,13 +712,9 @@
 (cl:export 'ProbePlacementParams)
 
 (cl:export 'placement)
-
 (cl:export 'spacing)
-
 (cl:export 'heightAboveFloor)
-
 (cl:export 'maxOctreeTriangles)
-
 (cl:export 'maxOctreeDepth)
 
 (cffi:defcfun ("iplCreateProbeBox" create-probe-box) error
@@ -840,13 +783,12 @@
   (probeBatch :pointer))
 
 (cffi:defcstruct BakingSettings
-    (bakeParametric bool)
+  (bakeParametric bool)
   (bakeConvolution bool))
 
 (cl:export 'BakingSettings)
 
 (cl:export 'bakeParametric)
-
 (cl:export 'bakeConvolution)
 
 (cffi:defcfun ("iplBakeReverb" bake-reverb) :void
