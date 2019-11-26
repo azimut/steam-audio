@@ -31,14 +31,14 @@
 (cl:export 'bool)
 
 (cffi:defcenum error
-  :status-success
-  :status-failure
-  :status-outofmemory
-  :status-initialization)
+  :success
+  :failure
+  :outofmemory
+  :initialization)
 
 (cl:export 'error)
 
-(cffi:defcfun ("iplCreateContext" create-context) error
+(cffi:defcfun ("iplCreateContext" ipl-create-context) error
   (logCallback :pointer)
   (allocateCallback :pointer)
   (freeCallback :pointer)
@@ -85,9 +85,9 @@
   (listenerUp vector3))
 
 (cffi:defcenum compute-device-type
-  :computedevice-cpu
-  :computedevice-gpu
-  :computedevice-any)
+  :cpu
+  :gpu
+  :any)
 
 (cl:export 'compute-device-type)
 
@@ -111,16 +111,16 @@
   (device :pointer))
 
 (cffi:defcenum SceneType
-  :scenetype-phonon
-  :scenetype-embree
-  :scenetype-radeonrays
-  :scenetype-custom)
+  :phonon
+  :embree
+  :radeonrays
+  :custom)
 
 (cl:export 'SceneType)
 
 (cffi:defcenum SimulationType
-  :simtype-realtime
-  :simtype-baked)
+  :realtime
+  :baked)
 
 (cl:export 'SimulationType)
 
@@ -269,8 +269,8 @@
   (numBounces :int))
 
 (cffi:defcenum ConvolutionType
-  :convolutiontype-phonon
-  :convolutiontype-trueaudionext)
+  :phonon
+  :trueaudionext)
 
 (cl:export 'ConvolutionType)
 
@@ -286,37 +286,37 @@
 (cl:export 'convolutionType)
 
 (cffi:defcenum ChannelLayoutType
-  :channellayouttype-speakers
-  :channellayouttype-ambisonics)
+  :speakers
+  :ambisonics)
 
 (cl:export 'ChannelLayoutType)
 
 (cffi:defcenum ChannelLayout
-  :channellayout-mono
-  :channellayout-stereo
-  :channellayout-quadraphonic
-  :channellayout-fivepointone
-  :channellayout-sevenpointone
-  :channellayout-custom)
+  :mono
+  :stereo
+  :quadraphonic
+  :fivepointone
+  :sevenpointone
+  :custom)
 
 (cl:export 'ChannelLayout)
 
 (cffi:defcenum AmbisonicsOrdering
-  :ambisonicsordering-fursemalham
-  :ambisonicsordering-acn)
+  :fursemalham
+  :acn)
 
 (cl:export 'AmbisonicsOrdering)
 
 (cffi:defcenum AmbisonicsNormalization
-  :ambisonicsnormalization-fursemalham
-  :ambisonicsnormalization-sn3d
-  :ambisonicsnormalization-n3d)
+  :fursemalham
+  :sn3d
+  :n3d)
 
 (cl:export 'AmbisonicsNormalization)
 
 (cffi:defcenum ChannelOrder
-  :channelorder-interleaved
-  :channelorder-deinterleaved)
+  :interleaved
+  :deinterleaved)
 
 (cl:export 'ChannelOrder)
 
@@ -390,8 +390,8 @@
   (outputAudio AudioBuffer))
 
 (cffi:defcenum HrtfDatabaseType
-  :hrtfdatabasetype-default
-  :hrtfdatabasetype-sofa)
+  :default
+  :sofa)
 
 (cl:export 'HrtfDatabaseType)
 
@@ -435,8 +435,8 @@
   (effect :pointer))
 
 (cffi:defcenum HrtfInterpolation
-  :hrtfinterpolation-nearest
-  :hrtfinterpolation-bilinear)
+  :nearest
+  :bilinear)
 
 (cl:export 'HrtfInterpolation)
 
@@ -540,16 +540,16 @@
   (renderer :pointer))
 
 (cffi:defcenum DirectOcclusionMethod
-  :directocclusion-raycast
-  :directocclusion-volumetric)
+  :raycast
+  :volumetric)
 
 (cl:export 'DirectOcclusionMethod)
 
 (cffi:defcenum DirectOcclusionMode
-  :directocclusion-none
-  :directocclusion-notransmission
-  :directocclusion-transmissionbyvolume
-  :directocclusion-transmissionbyfrequency)
+  :none
+  :notransmission
+  :transmissionbyvolume
+  :transmissionbyfrequency)
 
 (cl:export 'DirectOcclusionMode)
 
@@ -643,9 +643,9 @@
   (effect :pointer))
 
 (cffi:defcenum BakedDataType
-  :bakeddatatype-staticsource
-  :bakeddatatype-staticlistener
-  :bakeddatatype-reverb)
+  :staticsource
+  :staticlistener
+  :reverb)
 
 (cl:export 'BakedDataType)
 
@@ -696,9 +696,9 @@
   (effect :pointer))
 
 (cffi:defcenum ProbePlacement
-  :placement-centroid
-  :placement-octree
-  :placement-uniformfloor)
+  :centroid
+  :octree
+  :uniformfloor)
 
 (cl:export 'ProbePlacement)
 
