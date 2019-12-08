@@ -4,7 +4,13 @@
 ;;; Do not make changes to this file unless you know what you are doing--modify
 ;;; the SWIG interface file instead.
 
-(cffi:load-foreign-library "libphonon.so")
+(cffi:define-foreign-library phonon
+  (:unix "libphonon.so")
+  (:darwin "libphonon.dylib")
+  (:cygwin "phonon.dll")
+  (t (:default "libphonon")))
+(cffi:use-foreign-library phonon)
+
 (in-package :steam-audio)
 (defmacro define-constant (name value &optional doc)
   `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
