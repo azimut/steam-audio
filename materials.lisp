@@ -13,39 +13,22 @@
     (:metal    . (0.20s0 0.07s0 0.06s0 0.05s0 0.200s0 0.025s0 0.010s0))
     (:rock     . (0.13s0 0.20s0 0.24s0 0.05s0 0.015s0 0.002s0 0.001s0))))
 
-(defun make-material (&rest materials)
-  (let ((m (cffi:foreign-alloc '(:struct material) :count (length materials))))
-    (loop :for mat :in materials
-          :for i :from 0
-          :do (cffi:with-foreign-slots ((lowfreqabsorption
-                                         midfreqabsorption
-                                         highfreqabsorption
-                                         scattering
-                                         lowfreqtransmission
-                                         midfreqtransmission
-                                         highfreqtransmission)
-                                        (cffi:mem-aptr m '(:struct material) i)
-                                        (:struct material))
-                (let ((params (cdr (assoc mat *materials*))))
-                  (setf lowfreqabsorption    (nth 0 params))
-                  (setf midfreqabsorption    (nth 1 params))
-                  (setf highfreqabsorption   (nth 2 params))
-                  (setf scattering           (nth 3 params))
-                  (setf lowfreqtransmission  (nth 4 params))
-                  (setf midfreqtransmission  (nth 5 params))
-                  (setf highfreqtransmission (nth 6 params)))))
-    (print (cffi:mem-aref m '(:struct material) 0))
-    (print (cffi:mem-aref m '(:struct material) 1))
-    (print m))
-  #+nil
-  (alexandria:if-let ((params (cdr (assoc material *materials*))))
-    (c-let ((material (:struct material) :alloc t :count (length materials)))
-      (setf (material :lowfreqabsorption)    (nth 0 params)
-            (material :midfreqabsorption)    (nth 1 params)
-            (material :highfreqabsorption)   (nth 2 params)
-            (material :scattering)           (nth 3 params)
-            (material :lowfreqtransmission)  (nth 4 params)
-            (material :midfreqtransmission)  (nth 5 params)
-            (material :highfreqtransmission) (nth 6 params))
-      (material &))
-    (error "wrong material index")))
+(defun get-material-parameters (material)
+  (alexandria:assoc-value *materials* material))
+
+(defun make-materials (&rest materials)
+  (let ((n-materials (length materials)))
+    (c-let ((m (:struct steam-audio/raw::iplmaterial) :alloc t :count n-materials))
+      (loop :for material :in materials
+            :for params   := (get-material-parameters material)
+            :for i        :from 0
+            :do (setf (m i :lowfreqabsorption)    (nth 0 params)
+                      (m i :midfreqabsorption)    (nth 1 params)
+                      (m i :highfreqabsorption)   (nth 2 params)
+                      (m i :scattering)           (nth 3 params)
+                      (m i :lowfreqtransmission)  (nth 4 params)
+                      (m i :midfreqtransmission)  (nth 5 params)
+                      (m i :highfreqtransmission) (nth 6 params)))
+      (print (m 0))
+      (print (m 1))
+      (m &))))
