@@ -10,824 +10,676 @@
   (:cygwin "phonon.dll")
   (t (:default "libphonon")))
 (cffi:use-foreign-library phonon)
-
-(in-package :steam-audio)
-(defmacro define-constant (name value &optional doc)
-  `(defconstant ,name (if (boundp ',name) (symbol-value ',name) ,value)
-     ,@(when doc (list doc))))
+(in-package :steam-audio/raw)
 
 
 
-(define-constant STEAMAUDIO_VERSION_MAJOR 2)
+(alexandria:define-constant STEAMAUDIO_VERSION_MAJOR 2)
 
-(cl:export 'STEAMAUDIO_VERSION_MAJOR)
+(alexandria:define-constant STEAMAUDIO_VERSION_MINOR 0)
 
-(define-constant STEAMAUDIO_VERSION_MINOR 0)
+(alexandria:define-constant STEAMAUDIO_VERSION_PATCH 18)
 
-(cl:export 'STEAMAUDIO_VERSION_MINOR)
+(cffi:defcenum IPLbool
+	:IPL_FALSE
+	:IPL_TRUE)
 
-(define-constant STEAMAUDIO_VERSION_PATCH 17)
+(cffi:defcenum IPLerror
+	:IPL_STATUS_SUCCESS
+	:IPL_STATUS_FAILURE
+	:IPL_STATUS_OUTOFMEMORY
+	:IPL_STATUS_INITIALIZATION)
 
-(cl:export 'STEAMAUDIO_VERSION_PATCH)
-
-(cffi:defcenum bool
-  :false
-  :true)
-
-(cl:export 'bool)
-
-(cffi:defcenum error
-  :success
-  :failure
-  :outofmemory
-  :initialization)
-
-(cl:export 'error)
-
-(cffi:defcfun ("iplCreateContext" ipl-create-context) error
-  (logCallback      :pointer)
+(cffi:defcfun ("iplCreateContext" iplCreateContext) IPLerror
+  (logCallback :pointer)
   (allocateCallback :pointer)
-  (freeCallback     :pointer)
-  (context          :pointer))
-
-(cffi:defcfun ("iplDestroyContext" destroy-context) :void
+  (freeCallback :pointer)
   (context :pointer))
 
-(cffi:defcfun ("iplCleanup" cleanup) :void)
+(cffi:defcfun ("iplDestroyContext" iplDestroyContext) :void
+  (context :pointer))
 
-(cffi:defcstruct vector3
-  (x :float)
-  (y :float)
-  (z :float))
+(cffi:defcfun ("iplCleanup" iplCleanup) :void)
 
-(cl:export 'vector3)
+(cffi:defcstruct IPLVector3
+	(x :float)
+	(y :float)
+	(z :float))
 
-(cl:export 'x)
-(cl:export 'y)
-(cl:export 'z)
+(cffi:defcstruct IPLBox
+	(minCoordinates IPLVector3)
+	(maxCoordinates IPLVector3))
 
-(cffi:defcstruct Box
-  (minCoordinates vector3)
-  (maxCoordinates vector3))
+(cffi:defcstruct IPLSphere
+	(center IPLVector3)
+	(radius :float))
 
-(cl:export 'Box)
+(cffi:defcfun ("iplCalculateRelativeDirection" iplCalculateRelativeDirection) IPLVector3
+  (sourcePosition IPLVector3)
+  (listenerPosition IPLVector3)
+  (listenerAhead IPLVector3)
+  (listenerUp IPLVector3))
 
-(cl:export 'minCoordinates)
-(cl:export 'maxCoordinates)
+(cffi:defcenum IPLComputeDeviceType
+	:IPL_COMPUTEDEVICE_CPU
+	:IPL_COMPUTEDEVICE_GPU
+	:IPL_COMPUTEDEVICE_ANY)
 
-(cffi:defcstruct Sphere
-  (center vector3)
-  (radius :float))
+(cffi:defcstruct IPLComputeDeviceFilter
+	(type IPLComputeDeviceType)
+	(maxCUsToReserve :int)
+	(fractionCUsForIRUpdate :float))
 
-(cl:export 'Sphere)
-
-(cl:export 'center)
-(cl:export 'radius)
-
-(cffi:defcfun ("iplCalculateRelativeDirection" calculate-relative-direction) vector3
-  (sourcePosition   vector3)
-  (listenerPosition vector3)
-  (listenerAhead    vector3)
-  (listenerUp       vector3))
-
-(cffi:defcenum compute-device-type
-  :cpu
-  :gpu
-  :any)
-
-(cl:export 'compute-device-type)
-
-(cffi:defcstruct ComputeDeviceFilter
-  (type                   compute-device-type)
-  (maxCUsToReserve        :int)
-  (fractionCUsForIRUpdate :float))
-
-(cl:export 'ComputeDeviceFilter)
-
-(cl:export 'type)
-(cl:export 'maxCUsToReserve)
-(cl:export 'fractionCUsForIRUpdate)
-
-(cffi:defcfun ("iplCreateComputeDevice" create-compute-device) error
-  (context      :pointer)
-  (deviceFilter ComputeDeviceFilter)
-  (device       :pointer))
-
-(cffi:defcfun ("iplDestroyComputeDevice" destroy-compute-device) :void
+(cffi:defcfun ("iplCreateComputeDevice" iplCreateComputeDevice) IPLerror
+  (context :pointer)
+  (deviceFilter IPLComputeDeviceFilter)
   (device :pointer))
 
-(cffi:defcenum SceneType
-  :phonon
-  :embree
-  :radeonrays
-  :custom)
+(cffi:defcfun ("iplDestroyComputeDevice" iplDestroyComputeDevice) :void
+  (device :pointer))
 
-(cl:export 'SceneType)
+(cffi:defcenum IPLSceneType
+	:IPL_SCENETYPE_PHONON
+	:IPL_SCENETYPE_EMBREE
+	:IPL_SCENETYPE_RADEONRAYS
+	:IPL_SCENETYPE_CUSTOM)
 
-(cffi:defcenum SimulationType
-  :realtime
-  :baked)
+(cffi:defcenum IPLSimulationType
+	:IPL_SIMTYPE_REALTIME
+	:IPL_SIMTYPE_BAKED)
 
-(cl:export 'SimulationType)
+(cffi:defcstruct IPLSimulationSettings
+	(sceneType IPLSceneType)
+	(maxNumOcclusionSamples :int)
+	(numRays :int)
+	(numDiffuseSamples :int)
+	(numBounces :int)
+	(numThreads :int)
+	(irDuration :float)
+	(ambisonicsOrder :int)
+	(maxConvolutionSources :int)
+	(bakingBatchSize :int)
+	(irradianceMinDistance :float))
 
-(cffi:defcstruct SimulationSettings
-  (sceneType             SceneType)
-  (numOcclusionSamples   :int)
-  (numRays               :int)
-  (numDiffuseSamples     :int)
-  (numBounces            :int)
-  (numThreads            :int)
-  (irDuration            :float)
-  (ambisonicsOrder       :int)
-  (maxConvolutionSources :int)
-  (bakingBatchSize       :int)
-  (irradianceMinDistance :float))
+(cffi:defcstruct IPLTriangle
+	(indices :pointer :count 3))
 
-(cl:export 'simulationSettings)
+(cffi:defcstruct IPLMaterial
+	(lowFreqAbsorption :float)
+	(midFreqAbsorption :float)
+	(highFreqAbsorption :float)
+	(scattering :float)
+	(lowFreqTransmission :float)
+	(midFreqTransmission :float)
+	(highFreqTransmission :float))
 
-(cl:export 'sceneType)
-(cl:export 'numOcclusionSamples)
-(cl:export 'numRays)
-(cl:export 'numDiffuseSamples)
-(cl:export 'numBounces)
-(cl:export 'numThreads)
-(cl:export 'irDuration)
-(cl:export 'ambisonicsOrder)
-(cl:export 'maxConvolutionSources)
-(cl:export 'bakingBatchSize)
-(cl:export 'irradianceMinDistance)
-
-
-;; (cffi:defcstruct Triangle
-;;   (indices :pointer :count 3))
-(cffi:defcstruct Triangle
-  (indices :int :count 3))
-
-(cl:export 'Triangle)
-
-(cl:export 'indices)
-
-(cffi:defcstruct Material
-  (lowFreqAbsorption    :float)
-  (midFreqAbsorption    :float)
-  (highFreqAbsorption   :float)
-  (scattering           :float)
-  (lowFreqTransmission  :float)
-  (midFreqTransmission  :float)
-  (highFreqTransmission :float))
-
-(cl:export 'Material)
-
-(cl:export 'lowFreqAbsorption)
-(cl:export 'midFreqAbsorption)
-(cl:export 'highFreqAbsorption)
-(cl:export 'scattering)
-(cl:export 'lowFreqTransmission)
-(cl:export 'midFreqTransmission)
-(cl:export 'highFreqTransmission)
-
-(cffi:defcfun ("iplCreateScene" ipl-create-scene) error
-  (context                   :pointer)
-  (computeDevice             :pointer)
-  (simulationSettings        SimulationSettings)
-  (numMaterials              :int)
-  (materials                 :pointer)
-  (closestHitCallback        :pointer)
-  (anyHitCallback            :pointer)
+(cffi:defcfun ("iplCreateScene" iplCreateScene) IPLerror
+  (context :pointer)
+  (computeDevice :pointer)
+  (sceneType IPLSceneType)
+  (numMaterials :int)
+  (materials :pointer)
+  (closestHitCallback :pointer)
+  (anyHitCallback :pointer)
   (batchedClosestHitCallback :pointer)
-  (batchedAnyHitCallback     :pointer)
-  (userData                  :pointer)
-  (scene                     :pointer))
-
-(cffi:defcfun ("iplDestroyScene" destroy-scene) :void
+  (batchedAnyHitCallback :pointer)
+  (userData :pointer)
   (scene :pointer))
 
-(cffi:defcfun ("iplCreateStaticMesh" ipl-create-static-mesh) error
-  (scene           :pointer)
-  (numVertices     :int)
-  (numTriangles    :int)
-  (vertices        :pointer)
-  (triangles       :pointer)
-  (materialIndices :pointer)
-  (staticMesh      :pointer))
+(cffi:defcfun ("iplDestroyScene" iplDestroyScene) :void
+  (scene :pointer))
 
-(cffi:defcfun ("iplDestroyStaticMesh" destroy-static-mesh) :void
+(cffi:defcfun ("iplCreateStaticMesh" iplCreateStaticMesh) IPLerror
+  (scene :pointer)
+  (numVertices :int)
+  (numTriangles :int)
+  (vertices :pointer)
+  (triangles :pointer)
+  (materialIndices :pointer)
   (staticMesh :pointer))
 
-(cffi:defcfun ("iplSaveScene" save-scene) :int
+(cffi:defcfun ("iplDestroyStaticMesh" iplDestroyStaticMesh) :void
+  (staticMesh :pointer))
+
+(cffi:defcfun ("iplSaveScene" iplSaveScene) :int
   (scene :pointer)
-  (data  :pointer))
+  (data :pointer))
 
-(cffi:defcfun ("iplLoadScene" load-scene) error
-  (context            :pointer)
-  (simulationSettings SimulationSettings)
-  (data               :pointer)
-  (size               :int)
-  (computeDevice      :pointer)
-  (progressCallback   :pointer)
-  (scene              :pointer))
-
-(cffi:defcfun ("iplSaveSceneAsObj" save-scene-as-obj) :void
-  (scene        :pointer)
-  (fileBaseName :string))
-
-(cffi:defcstruct Matrix4x4
-  (elements :pointer))
-
-(cl:export 'Matrix4x4)
-
-(cl:export 'elements)
-
-(cffi:defcfun ("iplCreateInstancedMesh" create-instanced-mesh) error
-  (scene          :pointer)
-  (instancedScene :pointer)
-  (transform      Matrix4x4)
-  (instancedMesh  :pointer))
-
-(cffi:defcfun ("iplDestroyInstancedMesh" destroy-instanced-mesh) :void
-  (instancedMesh :pointer))
-
-(cffi:defcfun ("iplAddInstancedMesh" add-instanced-mesh) :void
-  (scene         :pointer)
-  (instancedMesh :pointer))
-
-(cffi:defcfun ("iplRemoveInstancedMesh" remove-instanced-mesh) :void
-  (scene         :pointer)
-  (instancedMesh :pointer))
-
-(cffi:defcfun ("iplUpdateInstancedMeshTransform" update-instanced-mesh-transform) :void
-  (instancedMesh :pointer)
-  (transform     Matrix4x4))
-
-(cffi:defcfun ("iplCommitScene" commit-scene) :void
+(cffi:defcfun ("iplLoadScene" iplLoadScene) IPLerror
+  (context :pointer)
+  (sceneType IPLSceneType)
+  (data :pointer)
+  (size :int)
+  (computeDevice :pointer)
+  (progressCallback :pointer)
   (scene :pointer))
 
-(cffi:defcfun ("iplCreateEnvironment" ipl-create-environment) error
-  (context            :pointer)
-  (computeDevice      :pointer)
-  (simulationSettings SimulationSettings)
-  (scene              :pointer)
-  (probeManager       :pointer)
-  (environment        :pointer))
+(cffi:defcfun ("iplSaveSceneAsObj" iplSaveSceneAsObj) :void
+  (scene :pointer)
+  (fileBaseName :string))
 
-(cffi:defcfun ("iplDestroyEnvironment" destroy-environment) :void
+(cffi:defcstruct IPLMatrix4x4
+	(elements :pointer))
+
+(cffi:defcfun ("iplCreateInstancedMesh" iplCreateInstancedMesh) IPLerror
+  (scene :pointer)
+  (instancedScene :pointer)
+  (transform IPLMatrix4x4)
+  (instancedMesh :pointer))
+
+(cffi:defcfun ("iplDestroyInstancedMesh" iplDestroyInstancedMesh) :void
+  (instancedMesh :pointer))
+
+(cffi:defcfun ("iplAddInstancedMesh" iplAddInstancedMesh) :void
+  (scene :pointer)
+  (instancedMesh :pointer))
+
+(cffi:defcfun ("iplRemoveInstancedMesh" iplRemoveInstancedMesh) :void
+  (scene :pointer)
+  (instancedMesh :pointer))
+
+(cffi:defcfun ("iplUpdateInstancedMeshTransform" iplUpdateInstancedMeshTransform) :void
+  (instancedMesh :pointer)
+  (transform IPLMatrix4x4))
+
+(cffi:defcfun ("iplCommitScene" iplCommitScene) :void
+  (scene :pointer))
+
+(cffi:defcfun ("iplCreateEnvironment" iplCreateEnvironment) IPLerror
+  (context :pointer)
+  (computeDevice :pointer)
+  (simulationSettings IPLSimulationSettings)
+  (scene :pointer)
+  (probeManager :pointer)
   (environment :pointer))
 
-(cffi:defcfun ("iplSetNumBounces" set-num-bounces) :void
+(cffi:defcfun ("iplDestroyEnvironment" iplDestroyEnvironment) :void
+  (environment :pointer))
+
+(cffi:defcfun ("iplSetNumBounces" iplSetNumBounces) :void
   (environment :pointer)
-  (numBounces  :int))
+  (numBounces :int))
 
-(cffi:defcenum ConvolutionType
-  :phonon
-  :trueaudionext)
+(cffi:defcenum IPLConvolutionType
+	:IPL_CONVOLUTIONTYPE_PHONON
+	:IPL_CONVOLUTIONTYPE_TRUEAUDIONEXT)
 
-(cl:export 'ConvolutionType)
+(cffi:defcstruct IPLRenderingSettings
+	(samplingRate :int)
+	(frameSize :int)
+	(convolutionType IPLConvolutionType))
 
-(cffi:defcstruct RenderingSettings
-  (samplingRate    :int)
-  (frameSize       :int)
-  (convolutionType ConvolutionType))
+(cffi:defcenum IPLChannelLayoutType
+	:IPL_CHANNELLAYOUTTYPE_SPEAKERS
+	:IPL_CHANNELLAYOUTTYPE_AMBISONICS)
 
-(cl:export 'RenderingSettings)
+(cffi:defcenum IPLChannelLayout
+	:IPL_CHANNELLAYOUT_MONO
+	:IPL_CHANNELLAYOUT_STEREO
+	:IPL_CHANNELLAYOUT_QUADRAPHONIC
+	:IPL_CHANNELLAYOUT_FIVEPOINTONE
+	:IPL_CHANNELLAYOUT_SEVENPOINTONE
+	:IPL_CHANNELLAYOUT_CUSTOM)
 
-(cl:export 'samplingRate)
-(cl:export 'frameSize)
-(cl:export 'convolutionType)
+(cffi:defcenum IPLAmbisonicsOrdering
+	:IPL_AMBISONICSORDERING_FURSEMALHAM
+	:IPL_AMBISONICSORDERING_ACN)
 
-(cffi:defcenum ChannelLayoutType
-  :speakers
-  :ambisonics)
+(cffi:defcenum IPLAmbisonicsNormalization
+	:IPL_AMBISONICSNORMALIZATION_FURSEMALHAM
+	:IPL_AMBISONICSNORMALIZATION_SN3D
+	:IPL_AMBISONICSNORMALIZATION_N3D)
 
-(cl:export 'ChannelLayoutType)
+(cffi:defcenum IPLChannelOrder
+	:IPL_CHANNELORDER_INTERLEAVED
+	:IPL_CHANNELORDER_DEINTERLEAVED)
 
-(cffi:defcenum ChannelLayout
-  :mono
-  :stereo
-  :quadraphonic
-  :fivepointone
-  :sevenpointone
-  :custom)
+(cffi:defcstruct IPLAudioFormat
+	(channelLayoutType IPLChannelLayoutType)
+	(channelLayout IPLChannelLayout)
+	(numSpeakers :int)
+	(speakerDirections :pointer)
+	(ambisonicsOrder :int)
+	(ambisonicsOrdering IPLAmbisonicsOrdering)
+	(ambisonicsNormalization IPLAmbisonicsNormalization)
+	(channelOrder IPLChannelOrder))
 
-(cl:export 'ChannelLayout)
+(cffi:defcstruct IPLAudioBuffer
+	(format IPLAudioFormat)
+	(numSamples :int)
+	(interleavedBuffer :pointer)
+	(deinterleavedBuffer :pointer))
 
-(cffi:defcenum AmbisonicsOrdering
-  :fursemalham
-  :acn)
+(cffi:defcfun ("iplMixAudioBuffers" iplMixAudioBuffers) :void
+  (numBuffers :int)
+  (inputAudio :pointer)
+  (outputAudio IPLAudioBuffer))
 
-(cl:export 'AmbisonicsOrdering)
+(cffi:defcfun ("iplInterleaveAudioBuffer" iplInterleaveAudioBuffer) :void
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcenum AmbisonicsNormalization
-  :fursemalham
-  :sn3d
-  :n3d)
+(cffi:defcfun ("iplDeinterleaveAudioBuffer" iplDeinterleaveAudioBuffer) :void
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cl:export 'AmbisonicsNormalization)
+(cffi:defcfun ("iplConvertAudioBufferFormat" iplConvertAudioBufferFormat) :void
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcenum ChannelOrder
-  :interleaved
-  :deinterleaved)
-
-(cl:export 'ChannelOrder)
-
-(cffi:defcstruct AudioFormat
-  (channelLayoutType       ChannelLayoutType)
-  (channelLayout           ChannelLayout)
-  (numSpeakers             :int)
-  (speakerDirections       :pointer)
-  (ambisonicsOrder         :int)
-  (ambisonicsOrdering      AmbisonicsOrdering)
-  (ambisonicsNormalization AmbisonicsNormalization)
-  (channelOrder            ChannelOrder))
-
-(cl:export 'AudioFormat)
-
-(cl:export 'channelLayoutType)
-(cl:export 'channelLayout)
-(cl:export 'numSpeakers)
-(cl:export 'speakerDirections)
-(cl:export 'ambisonicsOrder)
-(cl:export 'ambisonicsOrdering)
-(cl:export 'ambisonicsNormalization)
-(cl:export 'channelOrder)
-
-(cffi:defcstruct AudioBuffer
-  (format              AudioFormat)
-  (numSamples          :int)
-  (interleavedBuffer   :pointer)
-  (deinterleavedBuffer :pointer))
-
-(cl:export 'AudioBuffer)
-
-(cl:export 'format)
-(cl:export 'numSamples)
-(cl:export 'interleavedBuffer)
-(cl:export 'deinterleavedBuffer)
-
-(cffi:defcfun ("iplMixAudioBuffers" mix-audio-buffers) :void
-  (numBuffers  :int)
-  (inputAudio  :pointer)
-  (outputAudio AudioBuffer))
-
-(cffi:defcfun ("iplInterleaveAudioBuffer" interleave-audio-buffer) :void
-  (inputAudio  AudioBuffer)
-  (outputAudio AudioBuffer))
-
-(cffi:defcfun ("iplDeinterleaveAudioBuffer" deinterleave-audio-buffer) :void
-  (inputAudio  AudioBuffer)
-  (outputAudio AudioBuffer))
-
-(cffi:defcfun ("iplConvertAudioBufferFormat" convert-audio-buffer-format) :void
-  (inputAudio  AudioBuffer)
-  (outputAudio AudioBuffer))
-
-(cffi:defcfun ("iplCreateAmbisonicsRotator" create-ambisonics-rotator) error
+(cffi:defcfun ("iplCreateAmbisonicsRotator" iplCreateAmbisonicsRotator) IPLerror
   (context :pointer)
-  (order   :int)
+  (order :int)
   (rotator :pointer))
 
-(cffi:defcfun ("iplDestroyAmbisonicsRotator" destroy-ambisonics-rotator) :void
+(cffi:defcfun ("iplDestroyAmbisonicsRotator" iplDestroyAmbisonicsRotator) :void
   (rotator :pointer))
 
-(cffi:defcfun ("iplSetAmbisonicsRotation" set-ambisonics-rotation) :void
-  (rotator       :pointer)
-  (listenerAhead vector3)
-  (listenerUp    vector3))
+(cffi:defcfun ("iplSetAmbisonicsRotation" iplSetAmbisonicsRotation) :void
+  (rotator :pointer)
+  (listenerAhead IPLVector3)
+  (listenerUp IPLVector3))
 
-(cffi:defcfun ("iplRotateAmbisonicsAudioBuffer" rotate-ambisonics-audio-buffer) :void
-  (rotator     :pointer)
-  (inputAudio  AudioBuffer)
-  (outputAudio AudioBuffer))
+(cffi:defcfun ("iplRotateAmbisonicsAudioBuffer" iplRotateAmbisonicsAudioBuffer) :void
+  (rotator :pointer)
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcenum HrtfDatabaseType
-  :default
-  :sofa)
+(cffi:defcenum IPLHrtfDatabaseType
+	:IPL_HRTFDATABASETYPE_DEFAULT
+	:IPL_HRTFDATABASETYPE_SOFA)
 
-(cl:export 'HrtfDatabaseType)
+(cffi:defcstruct IPLHrtfParams
+	(type IPLHrtfDatabaseType)
+	(hrtfData :pointer)
+	(sofaFileName :string))
 
-(cffi:defcstruct HrtfParams
-  (type         HrtfDatabaseType)
-  (hrtfData     :pointer)
-  (sofaFileName :pointer))
-
-(cl:export 'HrtfParams)
-
-(cl:export 'type)
-(cl:export 'hrtfData)
-(cl:export 'sofaFileName)
-
-(cffi:defcfun ("iplCreateBinauralRenderer" ipl-create-binaural-renderer) error
-  (context           :pointer)
-  (renderingSettings RenderingSettings)
-  (params            HrtfParams)
-  (renderer          :pointer))
-
-(cffi:defcfun ("iplDestroyBinauralRenderer" destroy-binaural-renderer) :void
+(cffi:defcfun ("iplCreateBinauralRenderer" iplCreateBinauralRenderer) IPLerror
+  (context :pointer)
+  (renderingSettings IPLRenderingSettings)
+  (params IPLHrtfParams)
   (renderer :pointer))
 
-(cffi:defcfun ("iplCreatePanningEffect" create-panning-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
+(cffi:defcfun ("iplDestroyBinauralRenderer" iplDestroyBinauralRenderer) :void
+  (renderer :pointer))
 
-(cffi:defcfun ("iplDestroyPanningEffect" destroy-panning-effect) :void
+(cffi:defcfun ("iplCreatePanningEffect" iplCreatePanningEffect) IPLerror
+  (renderer :pointer)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyPanningEffect" apply-panning-effect) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplDestroyPanningEffect" iplDestroyPanningEffect) :void
+  (effect :pointer))
+
+(cffi:defcfun ("iplApplyPanningEffect" iplApplyPanningEffect) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (direction        vector3)
-  (outputAudio      AudioBuffer))
+  (inputAudio IPLAudioBuffer)
+  (direction IPLVector3)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplFlushPanningEffect" flush-panning-effect) :void
+(cffi:defcfun ("iplFlushPanningEffect" iplFlushPanningEffect) :void
   (effect :pointer))
 
-(cffi:defcenum HrtfInterpolation
-  :nearest
-  :bilinear)
+(cffi:defcenum IPLHrtfInterpolation
+	:IPL_HRTFINTERPOLATION_NEAREST
+	:IPL_HRTFINTERPOLATION_BILINEAR)
 
-(cl:export 'HrtfInterpolation)
-
-(cffi:defcfun ("iplCreateBinauralEffect" create-binaural-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
-
-(cffi:defcfun ("iplDestroyBinauralEffect" destroy-binaural-effect) :void
+(cffi:defcfun ("iplCreateBinauralEffect" iplCreateBinauralEffect) IPLerror
+  (renderer :pointer)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyBinauralEffect" apply-binaural-effect) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplDestroyBinauralEffect" iplDestroyBinauralEffect) :void
+  (effect :pointer))
+
+(cffi:defcfun ("iplApplyBinauralEffect" iplApplyBinauralEffect) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (direction        vector3)
-  (interpolation    HrtfInterpolation)
-  (outputAudio      AudioBuffer))
+  (inputAudio IPLAudioBuffer)
+  (direction IPLVector3)
+  (interpolation IPLHrtfInterpolation)
+  (spatialBlend :float)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplApplyBinauralEffectWithParameters" apply-binaural-effect-with-parameters) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplApplyBinauralEffectWithParameters" iplApplyBinauralEffectWithParameters) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (direction        vector3)
-  (interpolation    HrtfInterpolation)
-  (outputAudio      AudioBuffer)
-  (leftDelay        :pointer)
-  (rightDelay       :pointer))
+  (inputAudio IPLAudioBuffer)
+  (direction IPLVector3)
+  (interpolation IPLHrtfInterpolation)
+  (enableSpatialBlend IPLbool)
+  (spatialBlend :float)
+  (outputAudio IPLAudioBuffer)
+  (leftDelay :pointer)
+  (rightDelay :pointer))
 
-(cffi:defcfun ("iplFlushBinauralEffect" flush-binaural-effect) :void
+(cffi:defcfun ("iplFlushBinauralEffect" iplFlushBinauralEffect) :void
   (effect :pointer))
 
-(cffi:defcfun ("iplCreateVirtualSurroundEffect" create-virtual-surround-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
-
-(cffi:defcfun ("iplDestroyVirtualSurroundEffect" destroy-virtual-surround-effect) :void
+(cffi:defcfun ("iplCreateVirtualSurroundEffect" iplCreateVirtualSurroundEffect) IPLerror
+  (renderer :pointer)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyVirtualSurroundEffect" apply-virtual-surround-effect) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplDestroyVirtualSurroundEffect" iplDestroyVirtualSurroundEffect) :void
+  (effect :pointer))
+
+(cffi:defcfun ("iplApplyVirtualSurroundEffect" iplApplyVirtualSurroundEffect) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (outputAudio      AudioBuffer))
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplFlushVirtualSurroundEffect" flush-virtual-surround-effect) :void
+(cffi:defcfun ("iplFlushVirtualSurroundEffect" iplFlushVirtualSurroundEffect) :void
   (effect :pointer))
 
-(cffi:defcfun ("iplCreateAmbisonicsPanningEffect" create-ambisonics-panning-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
-
-(cffi:defcfun ("iplDestroyAmbisonicsPanningEffect" destroy-ambisonics-panning-effect) :void
+(cffi:defcfun ("iplCreateAmbisonicsPanningEffect" iplCreateAmbisonicsPanningEffect) IPLerror
+  (renderer :pointer)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyAmbisonicsPanningEffect" apply-ambisonics-panning-effect) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplDestroyAmbisonicsPanningEffect" iplDestroyAmbisonicsPanningEffect) :void
+  (effect :pointer))
+
+(cffi:defcfun ("iplApplyAmbisonicsPanningEffect" iplApplyAmbisonicsPanningEffect) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (outputAudio      AudioBuffer))
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplFlushAmbisonicsPanningEffect" flush-ambisonics-panning-effect) :void
+(cffi:defcfun ("iplFlushAmbisonicsPanningEffect" iplFlushAmbisonicsPanningEffect) :void
   (effect :pointer))
 
-(cffi:defcfun ("iplCreateAmbisonicsBinauralEffect" create-ambisonics-binaural-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
-
-(cffi:defcfun ("iplDestroyAmbisonicsBinauralEffect" destroy-ambisonics-binaural-effect) :void
+(cffi:defcfun ("iplCreateAmbisonicsBinauralEffect" iplCreateAmbisonicsBinauralEffect) IPLerror
+  (renderer :pointer)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyAmbisonicsBinauralEffect" apply-ambisonics-binaural-effect) :void
-  (effect           :pointer)
+(cffi:defcfun ("iplDestroyAmbisonicsBinauralEffect" iplDestroyAmbisonicsBinauralEffect) :void
+  (effect :pointer))
+
+(cffi:defcfun ("iplApplyAmbisonicsBinauralEffect" iplApplyAmbisonicsBinauralEffect) :void
+  (effect :pointer)
   (binauralRenderer :pointer)
-  (inputAudio       AudioBuffer)
-  (outputAudio      AudioBuffer))
+  (inputAudio IPLAudioBuffer)
+  (outputAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplFlushAmbisonicsBinauralEffect" flush-ambisonics-binaural-effect) :void
+(cffi:defcfun ("iplFlushAmbisonicsBinauralEffect" iplFlushAmbisonicsBinauralEffect) :void
   (effect :pointer))
 
-(cffi:defcfun ("iplCreateEnvironmentalRenderer" create-environmental-renderer) error
-  (context               :pointer)
-  (environment           :pointer)
-  (renderingSettings     RenderingSettings)
-  (outputFormat          AudioFormat)
-  (threadCreateCallback  :pointer)
+(cffi:defcfun ("iplCreateEnvironmentalRenderer" iplCreateEnvironmentalRenderer) IPLerror
+  (context :pointer)
+  (environment :pointer)
+  (renderingSettings IPLRenderingSettings)
+  (outputFormat IPLAudioFormat)
+  (threadCreateCallback :pointer)
   (threadDestroyCallback :pointer)
-  (renderer              :pointer))
-
-(cffi:defcfun ("iplDestroyEnvironmentalRenderer" destroy-environmental-renderer) :void
   (renderer :pointer))
 
-(cffi:defcfun ("iplGetEnvironmentForRenderer" get-environment-for-renderer) :pointer
+(cffi:defcfun ("iplDestroyEnvironmentalRenderer" iplDestroyEnvironmentalRenderer) :void
   (renderer :pointer))
 
-(cffi:defcenum DirectOcclusionMethod
-  :raycast
-  :volumetric)
+(cffi:defcfun ("iplGetEnvironmentForRenderer" iplGetEnvironmentForRenderer) :pointer
+  (renderer :pointer))
 
-(cl:export 'DirectOcclusionMethod)
+(cffi:defcenum IPLDistanceAttenuationModelType
+	:IPL_DISTANCEATTENUATION_DEFAULT
+	:IPL_DISTANCEATTENUATION_INVERSEDISTANCE
+	:IPL_DISTANCEATTENUATION_CALLBACK)
 
-(cffi:defcenum DirectOcclusionMode
-  :none
-  :notransmission
-  :transmissionbyvolume
-  :transmissionbyfrequency)
+(cffi:defcstruct IPLDistanceAttenuationModel
+	(type IPLDistanceAttenuationModelType)
+	(minDistance :float)
+	(callback :pointer)
+	(userData :pointer)
+	(dirty IPLbool))
 
-(cl:export 'DirectOcclusionMode)
+(cffi:defcenum IPLAirAbsorptionModelType
+	:IPL_AIRABSORPTION_DEFAULT
+	:IPL_AIRABSORPTION_EXPONENTIAL
+	:IPL_AIRABSORPTION_CALLBACK)
 
-(cffi:defcstruct DirectSoundPath
-  (direction           vector3)
-  (distanceAttenuation :float)
-  (airAbsorption       :pointer :count 3)
-  (propagationDelay    :float)
-  (occlusionFactor     :float)
-  (transmissionFactor  :pointer :count 3)
-  (directivityFactor   :float))
+(cffi:defcstruct IPLAirAbsorptionModel
+	(type IPLAirAbsorptionModelType)
+	(coefficients :pointer :count 3)
+	(callback :pointer)
+	(userData :pointer)
+	(dirty IPLbool))
 
-(cl:export 'DirectSoundPath)
+(cffi:defcenum IPLDirectOcclusionMethod
+	:IPL_DIRECTOCCLUSION_RAYCAST
+	:IPL_DIRECTOCCLUSION_VOLUMETRIC)
 
-(cl:export 'direction)
-(cl:export 'distanceAttenuation)
-(cl:export 'airAbsorption)
-(cl:export 'propagationDelay)
-(cl:export 'occlusionFactor)
-(cl:export 'transmissionFactor)
-(cl:export 'directivityFactor)
+(cffi:defcenum IPLDirectOcclusionMode
+	:IPL_DIRECTOCCLUSION_NONE
+	:IPL_DIRECTOCCLUSION_NOTRANSMISSION
+	:IPL_DIRECTOCCLUSION_TRANSMISSIONBYVOLUME
+	:IPL_DIRECTOCCLUSION_TRANSMISSIONBYFREQUENCY)
 
-(cffi:defcstruct Directivity
-  (dipoleWeight :float)
-  (dipolePower  :float)
-  (callback     :pointer)
-  (userData     :pointer))
+(cffi:defcstruct IPLDirectSoundPath
+	(direction IPLVector3)
+	(distanceAttenuation :float)
+	(airAbsorption :pointer :count 3)
+	(propagationDelay :float)
+	(occlusionFactor :float)
+	(transmissionFactor :pointer :count 3)
+	(directivityFactor :float))
 
-(cl:export 'Directivity)
+(cffi:defcstruct IPLDirectivity
+	(dipoleWeight :float)
+	(dipolePower :float)
+	(callback :pointer)
+	(userData :pointer))
 
-(cl:export 'dipoleWeight)
-(cl:export 'dipolePower)
-(cl:export 'callback)
-(cl:export 'userData)
+(cffi:defcstruct IPLSource
+	(position IPLVector3)
+	(ahead IPLVector3)
+	(up IPLVector3)
+	(right IPLVector3)
+	(directivity IPLDirectivity)
+	(distanceAttenuationModel IPLDistanceAttenuationModel)
+	(airAbsorptionModel IPLAirAbsorptionModel))
 
-(cffi:defcstruct Source
-  (position    vector3)
-  (ahead       vector3)
-  (up          vector3)
-  (right       vector3)
-  (directivity Directivity))
+(cffi:defcfun ("iplGetDirectSoundPath" iplGetDirectSoundPath) IPLDirectSoundPath
+  (environment :pointer)
+  (listenerPosition IPLVector3)
+  (listenerAhead IPLVector3)
+  (listenerUp IPLVector3)
+  (source IPLSource)
+  (sourceRadius :float)
+  (numSamples :int)
+  (occlusionMode IPLDirectOcclusionMode)
+  (occlusionMethod IPLDirectOcclusionMethod))
 
-(cl:export 'Source)
+(cffi:defcstruct IPLDirectSoundEffectOptions
+	(applyDistanceAttenuation IPLbool)
+	(applyAirAbsorption IPLbool)
+	(applyDirectivity IPLbool)
+	(directOcclusionMode IPLDirectOcclusionMode))
 
-(cl:export 'position)
-(cl:export 'ahead)
-(cl:export 'up)
-(cl:export 'right)
-(cl:export 'directivity)
-
-(cffi:defcfun ("iplGetDirectSoundPath" ipl-get-direct-sound-path) DirectSoundPath
-  (environment      :pointer)
-  (listenerPosition vector3)
-  (listenerAhead    vector3)
-  (listenerUp       vector3)
-  (source           Source)
-  (sourceRadius     :float)
-  (occlusionMode    DirectOcclusionMode)
-  (occlusionMethod  DirectOcclusionMethod))
-
-(cffi:defcstruct DirectSoundEffectOptions
-  (applyDistanceAttenuation bool)
-  (applyAirAbsorption       bool)
-  (applyDirectivity         bool)
-  (directOcclusionMode      DirectOcclusionMode))
-
-(cl:export 'DirectSoundEffectOptions)
-
-(cl:export 'applyDistanceAttenuation)
-(cl:export 'applyAirAbsorption)
-(cl:export 'applyDirectivity)
-(cl:export 'directOcclusionMode)
-
-(cffi:defcfun ("iplCreateDirectSoundEffect" create-direct-sound-effect) error
-  (renderer     :pointer)
-  (inputFormat  AudioFormat)
-  (outputFormat AudioFormat)
-  (effect       :pointer))
-
-(cffi:defcfun ("iplDestroyDirectSoundEffect" destroy-direct-sound-effect) :void
+(cffi:defcfun ("iplCreateDirectSoundEffect" iplCreateDirectSoundEffect) IPLerror
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
+  (renderingSettings IPLRenderingSettings)
   (effect :pointer))
 
-(cffi:defcfun ("iplApplyDirectSoundEffect" apply-direct-sound-effect) :void
-  (effect          :pointer)
-  (inputAudio      AudioBuffer)
-  (directSoundPath DirectSoundPath)
-  (options         DirectSoundEffectOptions)
-  (outputAudio     AudioBuffer))
-
-(cffi:defcfun ("iplFlushDirectSoundEffect" flush-direct-sound-effect) :void
+(cffi:defcfun ("iplDestroyDirectSoundEffect" iplDestroyDirectSoundEffect) :void
   (effect :pointer))
 
-(cffi:defcenum BakedDataType
-  :staticsource
-  :staticlistener
-  :reverb)
+(cffi:defcfun ("iplApplyDirectSoundEffect" iplApplyDirectSoundEffect) :void
+  (effect :pointer)
+  (inputAudio IPLAudioBuffer)
+  (directSoundPath IPLDirectSoundPath)
+  (options IPLDirectSoundEffectOptions)
+  (outputAudio IPLAudioBuffer))
 
-(cl:export 'BakedDataType)
-
-(cffi:defcstruct BakedDataIdentifier
-  (identifier :int)
-  (type       BakedDataType))
-
-(cl:export 'BakedDataIdentifier)
-
-(cl:export 'identifier)
-(cl:export 'type)
-
-(cffi:defcfun ("iplCreateConvolutionEffect" create-convolution-effect) error
-  (renderer       :pointer)
-  (identifier     BakedDataIdentifier)
-  (simulationType SimulationType)
-  (inputFormat    AudioFormat)
-  (outputFormat   AudioFormat)
-  (effect         :pointer))
-
-(cffi:defcfun ("iplDestroyConvolutionEffect" destroy-convolution-effect) :void
+(cffi:defcfun ("iplFlushDirectSoundEffect" iplFlushDirectSoundEffect) :void
   (effect :pointer))
 
-(cffi:defcfun ("iplSetConvolutionEffectIdentifier" set-convolution-effect-identifier) :void
-  (effect     :pointer)
-  (identifier BakedDataIdentifier))
+(cffi:defcenum IPLBakedDataType
+	:IPL_BAKEDDATATYPE_STATICSOURCE
+	:IPL_BAKEDDATATYPE_STATICLISTENER
+	:IPL_BAKEDDATATYPE_REVERB)
 
-(cffi:defcfun ("iplSetDryAudioForConvolutionEffect" set-dry-audio-for-convolution-effect) :void
-  (effect   :pointer)
-  (source   Source)
-  (dryAudio AudioBuffer))
+(cffi:defcstruct IPLBakedDataIdentifier
+	(identifier :int)
+	(type IPLBakedDataType))
 
-(cffi:defcfun ("iplGetWetAudioForConvolutionEffect" get-wet-audio-for-convolution-effect) :void
-  (effect           :pointer)
-  (listenerPosition vector3)
-  (listenerAhead    vector3)
-  (listenerUp       vector3)
-  (wetAudio         AudioBuffer))
-
-(cffi:defcfun ("iplGetMixedEnvironmentalAudio" get-mixed-environmental-audio) :void
-  (renderer         :pointer)
-  (listenerPosition vector3)
-  (listenerAhead    vector3)
-  (listenerUp       vector3)
-  (mixedWetAudio    AudioBuffer))
-
-(cffi:defcfun ("iplFlushConvolutionEffect" flush-convolution-effect) :void
+(cffi:defcfun ("iplCreateConvolutionEffect" iplCreateConvolutionEffect) IPLerror
+  (renderer :pointer)
+  (identifier IPLBakedDataIdentifier)
+  (simulationType IPLSimulationType)
+  (inputFormat IPLAudioFormat)
+  (outputFormat IPLAudioFormat)
   (effect :pointer))
 
-(cffi:defcenum ProbePlacement
-  :centroid
-  :octree
-  :uniformfloor)
+(cffi:defcfun ("iplDestroyConvolutionEffect" iplDestroyConvolutionEffect) :void
+  (effect :pointer))
 
-(cl:export 'ProbePlacement)
+(cffi:defcfun ("iplSetConvolutionEffectIdentifier" iplSetConvolutionEffectIdentifier) :void
+  (effect :pointer)
+  (identifier IPLBakedDataIdentifier))
 
-(cffi:defcstruct ProbePlacementParams
-  (placement          ProbePlacement)
-  (spacing            :float)
-  (heightAboveFloor   :float)
-  (maxOctreeTriangles :int)
-  (maxOctreeDepth     :int))
+(cffi:defcfun ("iplSetDryAudioForConvolutionEffect" iplSetDryAudioForConvolutionEffect) :void
+  (effect :pointer)
+  (source IPLSource)
+  (dryAudio IPLAudioBuffer))
 
-(cl:export 'ProbePlacementParams)
+(cffi:defcfun ("iplGetWetAudioForConvolutionEffect" iplGetWetAudioForConvolutionEffect) :void
+  (effect :pointer)
+  (listenerPosition IPLVector3)
+  (listenerAhead IPLVector3)
+  (listenerUp IPLVector3)
+  (wetAudio IPLAudioBuffer))
 
-(cl:export 'placement)
-(cl:export 'spacing)
-(cl:export 'heightAboveFloor)
-(cl:export 'maxOctreeTriangles)
-(cl:export 'maxOctreeDepth)
+(cffi:defcfun ("iplGetMixedEnvironmentalAudio" iplGetMixedEnvironmentalAudio) :void
+  (renderer :pointer)
+  (listenerPosition IPLVector3)
+  (listenerAhead IPLVector3)
+  (listenerUp IPLVector3)
+  (mixedWetAudio IPLAudioBuffer))
 
-(cffi:defcfun ("iplCreateProbeBox" create-probe-box) error
-  (context                  :pointer)
-  (scene                    :pointer)
+(cffi:defcfun ("iplFlushConvolutionEffect" iplFlushConvolutionEffect) :void
+  (effect :pointer))
+
+(cffi:defcenum IPLProbePlacement
+	:IPL_PLACEMENT_CENTROID
+	:IPL_PLACEMENT_OCTREE
+	:IPL_PLACEMENT_UNIFORMFLOOR)
+
+(cffi:defcstruct IPLProbePlacementParams
+	(placement IPLProbePlacement)
+	(spacing :float)
+	(heightAboveFloor :float)
+	(maxOctreeTriangles :int)
+	(maxOctreeDepth :int))
+
+(cffi:defcfun ("iplCreateProbeBox" iplCreateProbeBox) IPLerror
+  (context :pointer)
+  (scene :pointer)
   (boxLocalToWorldTransform :pointer)
-  (placementParams          ProbePlacementParams)
-  (progressCallback         :pointer)
-  (probeBox                 :pointer))
-
-(cffi:defcfun ("iplDestroyProbeBox" destroy-probe-box) :void
+  (placementParams IPLProbePlacementParams)
+  (progressCallback :pointer)
   (probeBox :pointer))
 
-(cffi:defcfun ("iplGetProbeSpheres" get-probe-spheres) :int
-  (probeBox     :pointer)
+(cffi:defcfun ("iplDestroyProbeBox" iplDestroyProbeBox) :void
+  (probeBox :pointer))
+
+(cffi:defcfun ("iplGetProbeSpheres" iplGetProbeSpheres) :int
+  (probeBox :pointer)
   (probeSpheres :pointer))
 
-(cffi:defcfun ("iplSaveProbeBox" save-probe-box) :int
+(cffi:defcfun ("iplSaveProbeBox" iplSaveProbeBox) :int
   (probeBox :pointer)
-  (data     :pointer))
+  (data :pointer))
 
-(cffi:defcfun ("iplLoadProbeBox" load-probe-box) error
-  (context  :pointer)
-  (data     :pointer)
-  (size     :int)
+(cffi:defcfun ("iplLoadProbeBox" iplLoadProbeBox) IPLerror
+  (context :pointer)
+  (data :pointer)
+  (size :int)
   (probeBox :pointer))
 
-(cffi:defcfun ("iplCreateProbeBatch" create-probe-batch) error
-  (context    :pointer)
+(cffi:defcfun ("iplCreateProbeBatch" iplCreateProbeBatch) IPLerror
+  (context :pointer)
   (probeBatch :pointer))
 
-(cffi:defcfun ("iplDestroyProbeBatch" destroy-probe-batch) :void
+(cffi:defcfun ("iplDestroyProbeBatch" iplDestroyProbeBatch) :void
   (probeBatch :pointer))
 
-(cffi:defcfun ("iplAddProbeToBatch" add-probe-to-batch) :void
+(cffi:defcfun ("iplAddProbeToBatch" iplAddProbeToBatch) :void
   (probeBatch :pointer)
-  (probeBox   :pointer)
+  (probeBox :pointer)
   (probeIndex :int))
 
-(cffi:defcfun ("iplFinalizeProbeBatch" finalize-probe-batch) :void
+(cffi:defcfun ("iplFinalizeProbeBatch" iplFinalizeProbeBatch) :void
   (probeBatch :pointer))
 
-(cffi:defcfun ("iplSaveProbeBatch" save-probe-batch) :int
+(cffi:defcfun ("iplSaveProbeBatch" iplSaveProbeBatch) :int
   (probeBatch :pointer)
-  (data       :pointer))
+  (data :pointer))
 
-(cffi:defcfun ("iplLoadProbeBatch" load-probe-batch) error
-  (context    :pointer)
-  (data       :pointer)
-  (size       :int)
+(cffi:defcfun ("iplLoadProbeBatch" iplLoadProbeBatch) IPLerror
+  (context :pointer)
+  (data :pointer)
+  (size :int)
   (probeBatch :pointer))
 
-(cffi:defcfun ("iplCreateProbeManager" create-probe-manager) error
-  (context      :pointer)
+(cffi:defcfun ("iplCreateProbeManager" iplCreateProbeManager) IPLerror
+  (context :pointer)
   (probeManager :pointer))
 
-(cffi:defcfun ("iplDestroyProbeManager" destroy-probe-manager) :void
+(cffi:defcfun ("iplDestroyProbeManager" iplDestroyProbeManager) :void
   (probeManager :pointer))
 
-(cffi:defcfun ("iplAddProbeBatch" add-probe-batch) :void
+(cffi:defcfun ("iplAddProbeBatch" iplAddProbeBatch) :void
   (probeManager :pointer)
-  (probeBatch   :pointer))
+  (probeBatch :pointer))
 
-(cffi:defcfun ("iplRemoveProbeBatch" remove-probe-batch) :void
+(cffi:defcfun ("iplRemoveProbeBatch" iplRemoveProbeBatch) :void
   (probeManager :pointer)
-  (probeBatch   :pointer))
+  (probeBatch :pointer))
 
-(cffi:defcstruct BakingSettings
-  (bakeParametric  bool)
-  (bakeConvolution bool))
+(cffi:defcstruct IPLBakingSettings
+	(bakeParametric IPLbool)
+	(bakeConvolution IPLbool)
+	(irDurationForBake :float))
 
-(cl:export 'BakingSettings)
-
-(cl:export 'bakeParametric)
-(cl:export 'bakeConvolution)
-
-(cffi:defcfun ("iplBakeReverb" bake-reverb) :void
-  (environment      :pointer)
-  (probeBox         :pointer)
-  (bakingSettings   BakingSettings)
+(cffi:defcfun ("iplBakeReverb" iplBakeReverb) :void
+  (environment :pointer)
+  (probeBox :pointer)
+  (bakingSettings IPLBakingSettings)
   (progressCallback :pointer))
 
-(cffi:defcfun ("iplBakePropagation" bake-propagation) :void
-  (environment      :pointer)
-  (probeBox         :pointer)
-  (sourceInfluence  Sphere)
-  (sourceIdentifier BakedDataIdentifier)
-  (bakingSettings   BakingSettings)
+(cffi:defcfun ("iplBakePropagation" iplBakePropagation) :void
+  (environment :pointer)
+  (probeBox :pointer)
+  (sourceInfluence IPLSphere)
+  (sourceIdentifier IPLBakedDataIdentifier)
+  (bakingSettings IPLBakingSettings)
   (progressCallback :pointer))
 
-(cffi:defcfun ("iplBakeStaticListener" bake-static-listener) :void
-  (environment        :pointer)
-  (probeBox           :pointer)
-  (listenerInfluence  Sphere)
-  (listenerIdentifier BakedDataIdentifier)
-  (bakingSettings     BakingSettings)
-  (progressCallback   :pointer))
+(cffi:defcfun ("iplBakeStaticListener" iplBakeStaticListener) :void
+  (environment :pointer)
+  (probeBox :pointer)
+  (listenerInfluence IPLSphere)
+  (listenerIdentifier IPLBakedDataIdentifier)
+  (bakingSettings IPLBakingSettings)
+  (progressCallback :pointer))
 
-(cffi:defcfun ("iplCancelBake" cancel-bake) :void)
+(cffi:defcfun ("iplCancelBake" iplCancelBake) :void)
 
-(cffi:defcfun ("iplDeleteBakedDataByIdentifier" delete-baked-data-by-identifier) :void
-  (probeBox   :pointer)
-  (identifier BakedDataIdentifier))
+(cffi:defcfun ("iplDeleteBakedDataByIdentifier" iplDeleteBakedDataByIdentifier) :void
+  (probeBox :pointer)
+  (identifier IPLBakedDataIdentifier))
 
-(cffi:defcfun ("iplGetBakedDataSizeByIdentifier" get-baked-data-size-by-identifier) :int
-  (probeBox   :pointer)
-  (identifier BakedDataIdentifier))
+(cffi:defcfun ("iplGetBakedDataSizeByIdentifier" iplGetBakedDataSizeByIdentifier) :int
+  (probeBox :pointer)
+  (identifier IPLBakedDataIdentifier))
+
+
