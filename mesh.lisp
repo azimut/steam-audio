@@ -3,10 +3,10 @@
 (defun create-static-mesh (vertices faces scene)
   (let ((n-vertices (length vertices))
         (n-faces    (/ (length faces) 3)))
-    (c-let ((cvertices  (:struct vector3)  :alloc t :count n-vertices)
-            (cfaces     (:struct triangle) :alloc t :count n-faces)
-            (imaterials :int               :alloc t :count n-faces)
-            (mesh       :pointer           :alloc t))
+    (c-let ((cvertices  (:struct steam-audio/raw::iplvector3)  :alloc t :count n-vertices)
+            (cfaces     (:struct steam-audio/raw::ipltriangle) :alloc t :count n-faces)
+            (imaterials :int     :alloc t :count n-faces)
+            (mesh       :pointer :alloc t))
       ;; Vertices
       (dotimes (i n-vertices)
         (setf (cvertices i :x) (aref (nth i vertices) 0)
@@ -23,10 +23,10 @@
       ;; Materials
       (dotimes (i n-faces) (setf (imaterials i) 0))
       ;; DO
-      (ipl-create-static-mesh scene
-                              n-vertices
-                              n-faces
-                              (cvertices  &)
-                              (cfaces     &)
-                              (imaterials &)
-                              mesh))))
+      (steam-audio/raw::ipl-create-static-mesh scene
+                                               n-vertices
+                                               n-faces
+                                               (cvertices  &)
+                                               (cfaces     &)
+                                               (imaterials &)
+                                               mesh))))
