@@ -1,7 +1,7 @@
 ;;;; package.lisp
 
-(defpackage #:steam-audio
-  (:use #:cl)
+(uiop:define-package #:steam-audio
+  (:use #:cl #:cffi-c-ref)
   (:export #:add-instanced-mesh
            #:add-probe-batch
            #:add-probe-to-batch
@@ -27,6 +27,7 @@
            #:create-binaural-renderer
            #:create-compute-device
            #:create-context
+           #:ipl-create-context
            #:create-convolution-effect
            #:create-direct-sound-effect
            #:create-environment

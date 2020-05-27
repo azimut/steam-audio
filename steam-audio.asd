@@ -6,10 +6,24 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:cffi)
+  :depends-on (#:cffi
+               #:cffi-c-ref)
   :components ((:file "package")
                (:file "steam-audio-cffi")
+               (:file "materials")
+               (:file "render")
+               (:file "simulation")
                (:file "steam-audio")))
+
+(asdf:defsystem #:steam-audio/testa
+  :description "Describe steam-audio here"
+  :author "azimut <azimut.github@protonmail.com>"
+  :license  "MIT"
+  :version "0.0.1"
+  :serial t
+  :depends-on (#:steam-audio
+               #:dendrite)
+  :components ((:file "testa")))
 
 (asdf:defsystem #:steam-audio/example
   :description "Describe steam-audio here"
@@ -17,8 +31,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:steam-audio
+  :depends-on (#:bodge-sndfile
                #:sndfile-blob
-               #:bodge-sndfile
-               #:cffi-c-ref)
+               #:steam-audio)
   :components ((:file "example")))
