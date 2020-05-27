@@ -21,14 +21,14 @@
 (alexandria:define-constant STEAMAUDIO_VERSION_PATCH 18)
 
 (cffi:defcenum IPLbool
-	:IPL_FALSE
-	:IPL_TRUE)
+  :IPL_FALSE
+  :IPL_TRUE)
 
 (cffi:defcenum IPLerror
-	:IPL_STATUS_SUCCESS
-	:IPL_STATUS_FAILURE
-	:IPL_STATUS_OUTOFMEMORY
-	:IPL_STATUS_INITIALIZATION)
+  :IPL_STATUS_SUCCESS
+  :IPL_STATUS_FAILURE
+  :IPL_STATUS_OUTOFMEMORY
+  :IPL_STATUS_INITIALIZATION)
 
 (cffi:defcfun ("iplCreateContext" iplCreateContext) IPLerror
   (logCallback :pointer)
@@ -42,17 +42,17 @@
 (cffi:defcfun ("iplCleanup" iplCleanup) :void)
 
 (cffi:defcstruct IPLVector3
-	(x :float)
-	(y :float)
-	(z :float))
+  (x :float)
+  (y :float)
+  (z :float))
 
 (cffi:defcstruct IPLBox
-	(minCoordinates IPLVector3)
-	(maxCoordinates IPLVector3))
+  (minCoordinates IPLVector3)
+  (maxCoordinates IPLVector3))
 
 (cffi:defcstruct IPLSphere
-	(center IPLVector3)
-	(radius :float))
+  (center IPLVector3)
+  (radius :float))
 
 (cffi:defcfun ("iplCalculateRelativeDirection" iplCalculateRelativeDirection) IPLVector3
   (sourcePosition IPLVector3)
@@ -61,14 +61,14 @@
   (listenerUp IPLVector3))
 
 (cffi:defcenum IPLComputeDeviceType
-	:IPL_COMPUTEDEVICE_CPU
-	:IPL_COMPUTEDEVICE_GPU
-	:IPL_COMPUTEDEVICE_ANY)
+  :IPL_COMPUTEDEVICE_CPU
+  :IPL_COMPUTEDEVICE_GPU
+  :IPL_COMPUTEDEVICE_ANY)
 
 (cffi:defcstruct IPLComputeDeviceFilter
-	(type IPLComputeDeviceType)
-	(maxCUsToReserve :int)
-	(fractionCUsForIRUpdate :float))
+  (type IPLComputeDeviceType)
+  (maxCUsToReserve :int)
+  (fractionCUsForIRUpdate :float))
 
 (cffi:defcfun ("iplCreateComputeDevice" iplCreateComputeDevice) IPLerror
   (context :pointer)
@@ -79,39 +79,39 @@
   (device :pointer))
 
 (cffi:defcenum IPLSceneType
-	:IPL_SCENETYPE_PHONON
-	:IPL_SCENETYPE_EMBREE
-	:IPL_SCENETYPE_RADEONRAYS
-	:IPL_SCENETYPE_CUSTOM)
+  :IPL_SCENETYPE_PHONON
+  :IPL_SCENETYPE_EMBREE
+  :IPL_SCENETYPE_RADEONRAYS
+  :IPL_SCENETYPE_CUSTOM)
 
 (cffi:defcenum IPLSimulationType
-	:IPL_SIMTYPE_REALTIME
-	:IPL_SIMTYPE_BAKED)
+  :IPL_SIMTYPE_REALTIME
+  :IPL_SIMTYPE_BAKED)
 
 (cffi:defcstruct IPLSimulationSettings
-	(sceneType IPLSceneType)
-	(maxNumOcclusionSamples :int)
-	(numRays :int)
-	(numDiffuseSamples :int)
-	(numBounces :int)
-	(numThreads :int)
-	(irDuration :float)
-	(ambisonicsOrder :int)
-	(maxConvolutionSources :int)
-	(bakingBatchSize :int)
-	(irradianceMinDistance :float))
+  (sceneType IPLSceneType)
+  (maxNumOcclusionSamples :int)
+  (numRays :int)
+  (numDiffuseSamples :int)
+  (numBounces :int)
+  (numThreads :int)
+  (irDuration :float)
+  (ambisonicsOrder :int)
+  (maxConvolutionSources :int)
+  (bakingBatchSize :int)
+  (irradianceMinDistance :float))
 
 (cffi:defcstruct IPLTriangle
-	(indices :pointer :count 3))
+  (indices :pointer :count 3))
 
 (cffi:defcstruct IPLMaterial
-	(lowFreqAbsorption :float)
-	(midFreqAbsorption :float)
-	(highFreqAbsorption :float)
-	(scattering :float)
-	(lowFreqTransmission :float)
-	(midFreqTransmission :float)
-	(highFreqTransmission :float))
+  (lowFreqAbsorption :float)
+  (midFreqAbsorption :float)
+  (highFreqAbsorption :float)
+  (scattering :float)
+  (lowFreqTransmission :float)
+  (midFreqTransmission :float)
+  (highFreqTransmission :float))
 
 (cffi:defcfun ("iplCreateScene" iplCreateScene) IPLerror
   (context :pointer)
@@ -159,7 +159,7 @@
   (fileBaseName :string))
 
 (cffi:defcstruct IPLMatrix4x4
-	(elements :pointer))
+  (elements :pointer))
 
 (cffi:defcfun ("iplCreateInstancedMesh" iplCreateInstancedMesh) IPLerror
   (scene :pointer)
@@ -201,54 +201,54 @@
   (numBounces :int))
 
 (cffi:defcenum IPLConvolutionType
-	:IPL_CONVOLUTIONTYPE_PHONON
-	:IPL_CONVOLUTIONTYPE_TRUEAUDIONEXT)
+  :IPL_CONVOLUTIONTYPE_PHONON
+  :IPL_CONVOLUTIONTYPE_TRUEAUDIONEXT)
 
 (cffi:defcstruct IPLRenderingSettings
-	(samplingRate :int)
-	(frameSize :int)
-	(convolutionType IPLConvolutionType))
+  (samplingRate :int)
+  (frameSize :int)
+  (convolutionType IPLConvolutionType))
 
 (cffi:defcenum IPLChannelLayoutType
-	:IPL_CHANNELLAYOUTTYPE_SPEAKERS
-	:IPL_CHANNELLAYOUTTYPE_AMBISONICS)
+  :IPL_CHANNELLAYOUTTYPE_SPEAKERS
+  :IPL_CHANNELLAYOUTTYPE_AMBISONICS)
 
 (cffi:defcenum IPLChannelLayout
-	:IPL_CHANNELLAYOUT_MONO
-	:IPL_CHANNELLAYOUT_STEREO
-	:IPL_CHANNELLAYOUT_QUADRAPHONIC
-	:IPL_CHANNELLAYOUT_FIVEPOINTONE
-	:IPL_CHANNELLAYOUT_SEVENPOINTONE
-	:IPL_CHANNELLAYOUT_CUSTOM)
+  :IPL_CHANNELLAYOUT_MONO
+  :IPL_CHANNELLAYOUT_STEREO
+  :IPL_CHANNELLAYOUT_QUADRAPHONIC
+  :IPL_CHANNELLAYOUT_FIVEPOINTONE
+  :IPL_CHANNELLAYOUT_SEVENPOINTONE
+  :IPL_CHANNELLAYOUT_CUSTOM)
 
 (cffi:defcenum IPLAmbisonicsOrdering
-	:IPL_AMBISONICSORDERING_FURSEMALHAM
-	:IPL_AMBISONICSORDERING_ACN)
+  :IPL_AMBISONICSORDERING_FURSEMALHAM
+  :IPL_AMBISONICSORDERING_ACN)
 
 (cffi:defcenum IPLAmbisonicsNormalization
-	:IPL_AMBISONICSNORMALIZATION_FURSEMALHAM
-	:IPL_AMBISONICSNORMALIZATION_SN3D
-	:IPL_AMBISONICSNORMALIZATION_N3D)
+  :IPL_AMBISONICSNORMALIZATION_FURSEMALHAM
+  :IPL_AMBISONICSNORMALIZATION_SN3D
+  :IPL_AMBISONICSNORMALIZATION_N3D)
 
 (cffi:defcenum IPLChannelOrder
-	:IPL_CHANNELORDER_INTERLEAVED
-	:IPL_CHANNELORDER_DEINTERLEAVED)
+  :IPL_CHANNELORDER_INTERLEAVED
+  :IPL_CHANNELORDER_DEINTERLEAVED)
 
 (cffi:defcstruct IPLAudioFormat
-	(channelLayoutType IPLChannelLayoutType)
-	(channelLayout IPLChannelLayout)
-	(numSpeakers :int)
-	(speakerDirections :pointer)
-	(ambisonicsOrder :int)
-	(ambisonicsOrdering IPLAmbisonicsOrdering)
-	(ambisonicsNormalization IPLAmbisonicsNormalization)
-	(channelOrder IPLChannelOrder))
+  (channelLayoutType IPLChannelLayoutType)
+  (channelLayout IPLChannelLayout)
+  (numSpeakers :int)
+  (speakerDirections :pointer)
+  (ambisonicsOrder :int)
+  (ambisonicsOrdering IPLAmbisonicsOrdering)
+  (ambisonicsNormalization IPLAmbisonicsNormalization)
+  (channelOrder IPLChannelOrder))
 
 (cffi:defcstruct IPLAudioBuffer
-	(format IPLAudioFormat)
-	(numSamples :int)
-	(interleavedBuffer :pointer)
-	(deinterleavedBuffer :pointer))
+  (format IPLAudioFormat)
+  (numSamples :int)
+  (interleavedBuffer :pointer)
+  (deinterleavedBuffer :pointer))
 
 (cffi:defcfun ("iplMixAudioBuffers" iplMixAudioBuffers) :void
   (numBuffers :int)
@@ -286,13 +286,13 @@
   (outputAudio IPLAudioBuffer))
 
 (cffi:defcenum IPLHrtfDatabaseType
-	:IPL_HRTFDATABASETYPE_DEFAULT
-	:IPL_HRTFDATABASETYPE_SOFA)
+  :IPL_HRTFDATABASETYPE_DEFAULT
+  :IPL_HRTFDATABASETYPE_SOFA)
 
 (cffi:defcstruct IPLHrtfParams
-	(type IPLHrtfDatabaseType)
-	(hrtfData :pointer)
-	(sofaFileName :string))
+  (type IPLHrtfDatabaseType)
+  (hrtfData :pointer)
+  (sofaFileName :string))
 
 (cffi:defcfun ("iplCreateBinauralRenderer" iplCreateBinauralRenderer) IPLerror
   (context :pointer)
@@ -323,8 +323,8 @@
   (effect :pointer))
 
 (cffi:defcenum IPLHrtfInterpolation
-	:IPL_HRTFINTERPOLATION_NEAREST
-	:IPL_HRTFINTERPOLATION_BILINEAR)
+  :IPL_HRTFINTERPOLATION_NEAREST
+  :IPL_HRTFINTERPOLATION_BILINEAR)
 
 (cffi:defcfun ("iplCreateBinauralEffect" iplCreateBinauralEffect) IPLerror
   (renderer :pointer)
@@ -429,62 +429,62 @@
   (renderer :pointer))
 
 (cffi:defcenum IPLDistanceAttenuationModelType
-	:IPL_DISTANCEATTENUATION_DEFAULT
-	:IPL_DISTANCEATTENUATION_INVERSEDISTANCE
-	:IPL_DISTANCEATTENUATION_CALLBACK)
+  :IPL_DISTANCEATTENUATION_DEFAULT
+  :IPL_DISTANCEATTENUATION_INVERSEDISTANCE
+  :IPL_DISTANCEATTENUATION_CALLBACK)
 
 (cffi:defcstruct IPLDistanceAttenuationModel
-	(type IPLDistanceAttenuationModelType)
-	(minDistance :float)
-	(callback :pointer)
-	(userData :pointer)
-	(dirty IPLbool))
+  (type IPLDistanceAttenuationModelType)
+  (minDistance :float)
+  (callback :pointer)
+  (userData :pointer)
+  (dirty IPLbool))
 
 (cffi:defcenum IPLAirAbsorptionModelType
-	:IPL_AIRABSORPTION_DEFAULT
-	:IPL_AIRABSORPTION_EXPONENTIAL
-	:IPL_AIRABSORPTION_CALLBACK)
+  :IPL_AIRABSORPTION_DEFAULT
+  :IPL_AIRABSORPTION_EXPONENTIAL
+  :IPL_AIRABSORPTION_CALLBACK)
 
 (cffi:defcstruct IPLAirAbsorptionModel
-	(type IPLAirAbsorptionModelType)
-	(coefficients :pointer :count 3)
-	(callback :pointer)
-	(userData :pointer)
-	(dirty IPLbool))
+  (type IPLAirAbsorptionModelType)
+  (coefficients :pointer :count 3)
+  (callback :pointer)
+  (userData :pointer)
+  (dirty IPLbool))
 
 (cffi:defcenum IPLDirectOcclusionMethod
-	:IPL_DIRECTOCCLUSION_RAYCAST
-	:IPL_DIRECTOCCLUSION_VOLUMETRIC)
+  :IPL_DIRECTOCCLUSION_RAYCAST
+  :IPL_DIRECTOCCLUSION_VOLUMETRIC)
 
 (cffi:defcenum IPLDirectOcclusionMode
-	:IPL_DIRECTOCCLUSION_NONE
-	:IPL_DIRECTOCCLUSION_NOTRANSMISSION
-	:IPL_DIRECTOCCLUSION_TRANSMISSIONBYVOLUME
-	:IPL_DIRECTOCCLUSION_TRANSMISSIONBYFREQUENCY)
+  :IPL_DIRECTOCCLUSION_NONE
+  :IPL_DIRECTOCCLUSION_NOTRANSMISSION
+  :IPL_DIRECTOCCLUSION_TRANSMISSIONBYVOLUME
+  :IPL_DIRECTOCCLUSION_TRANSMISSIONBYFREQUENCY)
 
 (cffi:defcstruct IPLDirectSoundPath
-	(direction IPLVector3)
-	(distanceAttenuation :float)
-	(airAbsorption :pointer :count 3)
-	(propagationDelay :float)
-	(occlusionFactor :float)
-	(transmissionFactor :pointer :count 3)
-	(directivityFactor :float))
+  (direction IPLVector3)
+  (distanceAttenuation :float)
+  (airAbsorption :pointer :count 3)
+  (propagationDelay :float)
+  (occlusionFactor :float)
+  (transmissionFactor :pointer :count 3)
+  (directivityFactor :float))
 
 (cffi:defcstruct IPLDirectivity
-	(dipoleWeight :float)
-	(dipolePower :float)
-	(callback :pointer)
-	(userData :pointer))
+  (dipoleWeight :float)
+  (dipolePower :float)
+  (callback :pointer)
+  (userData :pointer))
 
 (cffi:defcstruct IPLSource
-	(position IPLVector3)
-	(ahead IPLVector3)
-	(up IPLVector3)
-	(right IPLVector3)
-	(directivity IPLDirectivity)
-	(distanceAttenuationModel IPLDistanceAttenuationModel)
-	(airAbsorptionModel IPLAirAbsorptionModel))
+  (position IPLVector3)
+  (ahead IPLVector3)
+  (up IPLVector3)
+  (right IPLVector3)
+  (directivity IPLDirectivity)
+  (distanceAttenuationModel IPLDistanceAttenuationModel)
+  (airAbsorptionModel IPLAirAbsorptionModel))
 
 (cffi:defcfun ("iplGetDirectSoundPath" iplGetDirectSoundPath) IPLDirectSoundPath
   (environment :pointer)
@@ -498,10 +498,10 @@
   (occlusionMethod IPLDirectOcclusionMethod))
 
 (cffi:defcstruct IPLDirectSoundEffectOptions
-	(applyDistanceAttenuation IPLbool)
-	(applyAirAbsorption IPLbool)
-	(applyDirectivity IPLbool)
-	(directOcclusionMode IPLDirectOcclusionMode))
+  (applyDistanceAttenuation IPLbool)
+  (applyAirAbsorption IPLbool)
+  (applyDirectivity IPLbool)
+  (directOcclusionMode IPLDirectOcclusionMode))
 
 (cffi:defcfun ("iplCreateDirectSoundEffect" iplCreateDirectSoundEffect) IPLerror
   (inputFormat IPLAudioFormat)
@@ -523,13 +523,13 @@
   (effect :pointer))
 
 (cffi:defcenum IPLBakedDataType
-	:IPL_BAKEDDATATYPE_STATICSOURCE
-	:IPL_BAKEDDATATYPE_STATICLISTENER
-	:IPL_BAKEDDATATYPE_REVERB)
+  :IPL_BAKEDDATATYPE_STATICSOURCE
+  :IPL_BAKEDDATATYPE_STATICLISTENER
+  :IPL_BAKEDDATATYPE_REVERB)
 
 (cffi:defcstruct IPLBakedDataIdentifier
-	(identifier :int)
-	(type IPLBakedDataType))
+  (identifier :int)
+  (type IPLBakedDataType))
 
 (cffi:defcfun ("iplCreateConvolutionEffect" iplCreateConvolutionEffect) IPLerror
   (renderer :pointer)
@@ -569,16 +569,16 @@
   (effect :pointer))
 
 (cffi:defcenum IPLProbePlacement
-	:IPL_PLACEMENT_CENTROID
-	:IPL_PLACEMENT_OCTREE
-	:IPL_PLACEMENT_UNIFORMFLOOR)
+  :IPL_PLACEMENT_CENTROID
+  :IPL_PLACEMENT_OCTREE
+  :IPL_PLACEMENT_UNIFORMFLOOR)
 
 (cffi:defcstruct IPLProbePlacementParams
-	(placement IPLProbePlacement)
-	(spacing :float)
-	(heightAboveFloor :float)
-	(maxOctreeTriangles :int)
-	(maxOctreeDepth :int))
+  (placement IPLProbePlacement)
+  (spacing :float)
+  (heightAboveFloor :float)
+  (maxOctreeTriangles :int)
+  (maxOctreeDepth :int))
 
 (cffi:defcfun ("iplCreateProbeBox" iplCreateProbeBox) IPLerror
   (context :pointer)
@@ -646,9 +646,9 @@
   (probeBatch :pointer))
 
 (cffi:defcstruct IPLBakingSettings
-	(bakeParametric IPLbool)
-	(bakeConvolution IPLbool)
-	(irDurationForBake :float))
+  (bakeParametric IPLbool)
+  (bakeConvolution IPLbool)
+  (irDurationForBake :float))
 
 (cffi:defcfun ("iplBakeReverb" iplBakeReverb) :void
   (environment :pointer)
