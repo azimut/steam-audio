@@ -9,6 +9,7 @@
    (asdf:system-relative-pathname :bodge-sndfile/example
                                   "example/sample.ogg")))
 
+                                        ;#+nil
 (defun run ()
   "Native example reading metadata with thin API"
   (c-with ((sf-info %sf:info :clear t))
@@ -16,19 +17,24 @@
       (when (cffi:null-pointer-p sf-file)
         (error "Failed to open sound file ~A: ~A" *sample-file*
                (cffi:foreign-string-to-lisp (%sf:strerror sf-file))))
-      (assert (member (sf-info :channels) '(1)))
+      (assert (member  (sf-info :channels) '(1)))
       (assert (= 44100 (sf-info :samplerate)))
-      (assert (plusp (sf-info :frames)))
-      (c-let ((raw-output :float :alloc t :count (* (sf-info :channels)
-                                                    (sf-info :frames))))
+      (assert (plusp   (sf-info :frames)))
+      (c-let ((raw-output :float
+                          :alloc t
+                          :count (* (sf-info :channels)
+                                    (sf-info :frames))))
         (format t "read ~d bytes"
-                (%sf:read-float sf-file (raw-output &) (* (sf-info :channels)
-                                                          (sf-info :frames))))
+                (%sf:read-float sf-file (raw-output &)
+                                (* (sf-info :channels)
+                                   (sf-info :frames))))
+        ;;#+nil
         (let ((audiobuffer (cffi:foreign-alloc '(:struct steam-audio:audiobuffer))))
           (setf (cffi:foreign-slot-value audiobuffer
                                          '(:struct steam-audio:audiobuffer)
                                          'format)))
-        (raw-output &)))))
+        ;;(raw-output &)
+        ))))
 
 ;;(cffi:foreign-alloc '(:struct steam-audio:audiobuffer))
 
