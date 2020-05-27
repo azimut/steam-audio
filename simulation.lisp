@@ -12,7 +12,7 @@
           (simulation :maxnumocclusionsamples) 32
           (simulation :numrays)                4096
           (simulation :numthreads)             1
-          (simulation :scenetype)              :phonon)
+          (simulation :scenetype)              :IPL_SCENETYPE_PHONON)
     (format t "simulation: ~a~%" simulation)
     (format t "simulation ptr: ~a~%" (simulation &))
     (simulation &)))

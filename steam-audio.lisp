@@ -5,48 +5,63 @@
 (defun create-context ()
   (let ((context (cffi:foreign-alloc :pointer)))
     (format t "old ctx ptr: ~a~%" (cffi:mem-ref context :pointer))
-    (ipl-create-context (cffi:null-pointer)
-                        (cffi:null-pointer)
-                        (cffi:null-pointer)
-                        context)
+    (steam-audio/raw::ipl-create-context (cffi:null-pointer)
+                                         (cffi:null-pointer)
+                                         (cffi:null-pointer)
+                                         context)
     (format t "new ctx ptr: ~a~%" (cffi:mem-ref context :pointer))
-    (force-output)
     context))
 
 (defun create-scene (context simulation)
-  (let ((materials (make-material :rock :wood))
+  (let ((materials (make-materials :rock :wood))
         (scene     (cffi:foreign-alloc :pointer)))
-    (ipl-create-scene context
-                      (cffi:null-pointer)
-                      simulation
-                      2
-                      materials
-                      (cffi:null-pointer)
-                      (cffi:null-pointer)
-                      (cffi:null-pointer)
-                      (cffi:null-pointer)
-                      (cffi:null-pointer)
-                      scene)
+    (format t "new scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
+    (steam-audio/raw::ipl-create-scene context
+                                       (cffi:null-pointer)
+                                       simulation
+                                       2
+                                       materials
+                                       (cffi:null-pointer)
+                                       (cffi:null-pointer)
+                                       (cffi:null-pointer)
+                                       (cffi:null-pointer)
+                                       (cffi:null-pointer)
+                                       scene)
+    (format t "new scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
     scene))
 
 (defun create-environment (context simulation scene)
   (let ((environment (cffi:foreign-alloc :pointer)))
     (format t "old env ptr: ~a~%" (cffi:mem-ref environment :pointer))
-    (ipl-create-environment context
-                            (cffi:null-pointer)
-                            simulation
-                            scene
-                            (cffi:null-pointer)
-                            environment)
+    (steam-audio/raw::ipl-create-environment context
+                                             (cffi:null-pointer)
+                                             simulation
+                                             scene
+                                             (cffi:null-pointer)
+                                             environment)
     (format t "new env ptr: ~a~%" (cffi:mem-ref environment :pointer))
-    (force-output)
     environment))
 
-(defun main ()
-  (let* ((context     (create-context))
-         ;;(renderer    (create-binaural-renderer context))
-         (simulation  (make-default-simulation-settings))
-         (scene       (create-scene       context simulation))
-         (mesh        (create-default-static-mesh scene))
-         (environment (create-environment context simulation scene)))
-    nil))
+
+(defun get-direct-sound-path (environment source)
+  (c-let ((listener-position (:struct steam-audio/raw::iplvector3) :alloc t)
+          (listener-ahead    (:struct steam-audio/raw::iplvector3) :alloc t)
+          (listener-up       (:struct steam-audio/raw::iplvector3) :alloc t))
+    (setf (listener-position :x) 10s0
+          (listener-position :y) 10s0
+          (listener-position :z) 10s0)
+    (setf (listener-ahead    :x) 1s0
+          (listener-ahead    :y) 1s0
+          (listener-ahead    :z) 1s0)
+    (setf (listener-up       :x) 0s0
+          (listener-up       :y) 1s0
+          (listener-up       :z) 0s0)
+    (steam-audio/raw::ipl-get-direct-sound-path environment
+                                                (listener-position &)
+                                                (listener-ahead    &)
+                                                (listener-up       &)
+                                                source
+                                                0s0
+                                                10
+                                                :IPL_DIRECTOCCLUSION_NONE
+                                                :IPL_DIRECTOCCLUSION_RAYCAST)))

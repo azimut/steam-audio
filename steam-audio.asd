@@ -7,12 +7,15 @@
   :version "0.0.1"
   :serial t
   :depends-on (#:cffi
-               #:cffi-c-ref)
+               #:cffi-c-ref
+               #:alexandria)
   :components ((:file "package")
                (:file "steam-audio-cffi")
                (:file "materials")
                (:file "render")
                (:file "simulation")
+               (:file "source")
+               (:file "mesh")
                (:file "steam-audio")))
 
 (asdf:defsystem #:steam-audio/testa
