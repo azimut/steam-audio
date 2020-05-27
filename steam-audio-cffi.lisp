@@ -10,7 +10,7 @@
   (:cygwin "phonon.dll")
   (t (:default "libphonon")))
 (cffi:use-foreign-library phonon)
-(in-package :steam-audio/raw)
+(cl:in-package :steam-audio/raw)
 
 (alexandria:define-constant +STEAMAUDIO_VERSION_MAJOR+ 2)
 (alexandria:define-constant +STEAMAUDIO_VERSION_MINOR+ 0)
@@ -443,7 +443,7 @@
 
 (cffi:defcstruct IPLAirAbsorptionModel
   (type         IPLAirAbsorptionModelType)
-  (coefficients :pointer                  :count 3)
+  (coefficients :float :count 3)
   (callback     :pointer)
   (userData     :pointer)
   (dirty        IPLbool))
@@ -474,13 +474,13 @@
   (userData     :pointer))
 
 (cffi:defcstruct IPLSource
-  (position                 IPLVector3)
-  (ahead                    IPLVector3)
-  (up                       IPLVector3)
-  (right                    IPLVector3)
-  (directivity              IPLDirectivity)
-  (distanceAttenuationModel IPLDistanceAttenuationModel)
-  (airAbsorptionModel       IPLAirAbsorptionModel))
+  (position                 (:struct IPLVector3))
+  (ahead                    (:struct IPLVector3))
+  (up                       (:struct IPLVector3))
+  (right                    (:struct IPLVector3))
+  (directivity              (:struct IPLDirectivity))
+  (distanceAttenuationModel (:struct IPLDistanceAttenuationModel))
+  (airAbsorptionModel       (:struct IPLAirAbsorptionModel)))
 
 (cffi:defcfun ("iplGetDirectSoundPath" ipl-get-direct-sound-path) IPLDirectSoundPath
   (environment      :pointer)
