@@ -1,7 +1,7 @@
 (in-package #:steam-audio)
 
 (defun make-default-simulation-settings ()
-  (c-let ((simulation (:struct steam-audio/raw::iplsimulationsettings) :alloc t :free nil))
+  (c-let ((simulation (:struct steam-audio/raw::iplsimulationsettings) :alloc t))
     (setf (simulation :ambisonicsorder)        1
           (simulation :bakingbatchsize)        1
           (simulation :irduration)             1s0

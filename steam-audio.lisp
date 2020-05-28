@@ -12,13 +12,13 @@
     (format t "new ctx ptr: ~a~%" (cffi:mem-ref context :pointer))
     context))
 
-(defun create-scene (context simulation)
+(defun create-scene (context)
   (let ((materials (make-materials :rock :wood))
         (scene     (cffi:foreign-alloc :pointer)))
-    (format t "new scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
+    (format t "old scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
     (steam-audio/raw::ipl-create-scene context
                                        (cffi:null-pointer)
-                                       simulation
+                                       :IPL_SCENETYPE_PHONON
                                        2
                                        materials
                                        (cffi:null-pointer)

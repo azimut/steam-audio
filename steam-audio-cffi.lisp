@@ -98,7 +98,7 @@
   (irradianceMinDistance  :float))
 
 (cffi:defcstruct IPLTriangle
-  (indices :pointer :count 3))
+  (indices :int :count 3))
 
 (cffi:defcstruct IPLMaterial
   (lowFreqAbsorption    :float)
@@ -129,9 +129,9 @@
   (scene           :pointer)
   (numVertices     :int)
   (numTriangles    :int)
-  (vertices        :pointer)
-  (triangles       :pointer)
-  (materialIndices :pointer)
+  (vertices        (:pointer (:struct iplvector3)))
+  (triangles       (:pointer (:struct ipltriangle)))
+  (materialIndices (:pointer :int))
   (staticMesh      :pointer))
 
 (cffi:defcfun ("iplDestroyStaticMesh" ipl-destroy-static-mesh) :void
