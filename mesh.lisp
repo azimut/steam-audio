@@ -34,10 +34,11 @@
       (print (loop for i from 0 below n-faces collect (imaterials i)))
       ;; DO
       (print
-       (steam-audio/raw::ipl-create-static-mesh scene
+       (steam-audio/raw::ipl-create-static-mesh (cffi:mem-ref scene :pointer)
                                                 n-vertices
                                                 n-faces
                                                 (cvertices  &)
                                                 (cfaces     &)
                                                 (imaterials &)
-                                                mesh)))))
+                                                (mesh       &)))
+      (mesh &))))

@@ -18,7 +18,7 @@
         (scene     (cffi:foreign-alloc :pointer)))
     (format t "old scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
     (print
-     (steam-audio/raw::ipl-create-scene context
+     (steam-audio/raw::ipl-create-scene (cffi:mem-ref context :pointer)
                                         (cffi:null-pointer)
                                         :IPL_SCENETYPE_PHONON
                                         1
