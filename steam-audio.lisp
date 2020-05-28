@@ -5,28 +5,30 @@
 (defun create-context ()
   (let ((context (cffi:foreign-alloc :pointer)))
     (format t "old ctx ptr: ~a~%" (cffi:mem-ref context :pointer))
-    (steam-audio/raw::ipl-create-context (cffi:null-pointer)
-                                         (cffi:null-pointer)
-                                         (cffi:null-pointer)
-                                         context)
+    (print
+     (steam-audio/raw::ipl-create-context (cffi:null-pointer)
+                                          (cffi:null-pointer)
+                                          (cffi:null-pointer)
+                                          context))
     (format t "new ctx ptr: ~a~%" (cffi:mem-ref context :pointer))
     context))
 
 (defun create-scene (context)
-  (let ((materials (make-materials :rock :wood))
+  (let ((materials (make-materials :rock))
         (scene     (cffi:foreign-alloc :pointer)))
     (format t "old scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
-    (steam-audio/raw::ipl-create-scene context
-                                       (cffi:null-pointer)
-                                       :IPL_SCENETYPE_PHONON
-                                       2
-                                       materials
-                                       (cffi:null-pointer)
-                                       (cffi:null-pointer)
-                                       (cffi:null-pointer)
-                                       (cffi:null-pointer)
-                                       (cffi:null-pointer)
-                                       scene)
+    (print
+     (steam-audio/raw::ipl-create-scene context
+                                        (cffi:null-pointer)
+                                        :IPL_SCENETYPE_PHONON
+                                        1
+                                        materials
+                                        (cffi:null-pointer)
+                                        (cffi:null-pointer)
+                                        (cffi:null-pointer)
+                                        (cffi:null-pointer)
+                                        (cffi:null-pointer)
+                                        scene))
     (format t "new scene ptr: ~a~%" (cffi:mem-ref scene :pointer))
     scene))
 

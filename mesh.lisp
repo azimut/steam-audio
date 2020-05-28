@@ -17,9 +17,10 @@
       (dotimes (i n-vertices)
         (print (cvertices i)))
       ;; Faces
-      (loop :for (a b c) :on faces :by #'cdddr
+      (loop :for (c b a) :on faces :by #'cdddr
             :for i :from 0 :by 3
             :for x :from 0
+            :when (and a b c)
             :do (format t "abc: ~d,~d,~d  i:~d  x:~d~%" a b c i x)
                 (setf (cfaces x :indices 0) (nth (+ i 0) faces)
                       (cfaces x :indices 1) (nth (+ i 1) faces)
@@ -29,13 +30,14 @@
                      (cfaces i :indices 1)
                      (cfaces i :indices 2))))
       ;; Materials
-      (dotimes (i n-faces) (setf (imaterials i) 1))
+      (dotimes (i n-faces) (setf (imaterials i) 0))
       (print (loop for i from 0 below n-faces collect (imaterials i)))
       ;; DO
-      (steam-audio/raw::ipl-create-static-mesh scene
-                                               n-vertices
-                                               n-faces
-                                               (cvertices  &)
-                                               (cfaces     &)
-                                               (imaterials &)
-                                               mesh))))
+      (print
+       (steam-audio/raw::ipl-create-static-mesh scene
+                                                n-vertices
+                                                n-faces
+                                                (cvertices  &)
+                                                (cfaces     &)
+                                                (imaterials &)
+                                                mesh)))))

@@ -114,7 +114,7 @@
   (computeDevice             :pointer)
   (sceneType                 IPLSceneType)
   (numMaterials              :int)
-  (materials                 :pointer)
+  (materials                 :pointer);; FIXME
   (closestHitCallback        :pointer)
   (anyHitCallback            :pointer)
   (batchedClosestHitCallback :pointer)

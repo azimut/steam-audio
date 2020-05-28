@@ -3,9 +3,8 @@
 (defun create-default-static-mesh (scene)
   "Creates a default cube into SCENE for testing"
   (destructuring-bind (vertices faces)
-      (dendrite.primitives:box-data :normals nil :tex-coords nil :width 2 :height 2 :depth 2)
+      (dendrite.primitives:plain-data :normals nil :tex-coords nil)
     (create-static-mesh vertices faces scene)))
-
 
 (defvar *context*)
 (defvar *scene*)
@@ -15,9 +14,9 @@
 (defun main ()
   (let* ((context     (create-context))
          ;;(renderer    (create-binaural-renderer context))
-         (simulation  (make-default-simulation-settings))
+         ;;(simulation  (make-default-simulation-settings))
          (scene       (create-scene               context))
-         ;; (_           (create-default-static-mesh scene))
+         (_           (create-default-static-mesh scene))
          ;; (environment (create-environment         context simulation scene))
          ;; (source      (make-source))
          )
@@ -26,4 +25,6 @@
     (setf *scene* scene)
     ;; (setf *env*   environment)
     ;; (setf *source* source)
+    ;; (steam-audio/raw::ipl-destroy-scene scene)
+    ;; (steam-audio/raw::ipl-destroy-context context)
     nil))
